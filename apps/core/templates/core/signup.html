@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class="'container">
+        <div class="columns">
+             <div class="column is-12">
+                <h1 class=" title">Sign up</h1>
+                 <form method="POST" action="." >
+                     {% csrf_token %}
+
+                     {{ form.as_p }}
+
+                     <button type="submit" class="btn btn-success">Signup</button>
+
+                 </form>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock  %}

@@ -1,0 +1,56 @@
+{% extends 'core/base.html'%}
+{% load humanize %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="columns">
+      <div class="column is-12">
+          <h1 class="title">Search</h1>
+
+          <p>Search term: "{{ query }}"</p>
+
+          <hr>
+
+          <form method="get" action="{% url 'search' %}">
+              <div class="field">
+                  <div class="control">
+                      <input type="text" class="input" name="query" value="{{ query }}">
+
+                  </div>
+              </div>
+               <div class="field">
+                  <div class="control">
+                      <button class="button is-success">Search</button>
+
+                  </div>
+              </div>
+
+
+          </form>
+          <hr>
+          <div class="search-results">
+              <div class="columns">
+      <div class="column is-4">
+              {% for ssuser in ssusers %}
+              <div><br>
+                      <figure class="media-left">
+                          <p class="image is-64x64">
+                              {% if ssuser.studysocioprofile.avatar %}
+                <img src="{{ ssuser.studysocioprofile.avatar.url }}">
+                              {% endif %}
+                          </p>
+                          <p class="media-right"><a href="{% url 'studysocioprofile' ssuser.username %}">{{ ssuser.username }}</a> </p>
+                      </figure>
+
+              </div>
+
+      </div>
+              </div>
+
+              {% endfor %}
+          </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

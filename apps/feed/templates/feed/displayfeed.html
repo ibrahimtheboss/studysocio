@@ -1,0 +1,96 @@
+
+{% extends 'core/base.html'%}
+
+{% block content %}
+{% include 'feed/feed.html' %}
+  <div class="container" id="feedapp">
+    <div class="columns">
+      <div class="column is-12">
+
+
+           <div class="wrapper-ssuser">
+          {% for postfeed in ssuser %}
+            <div class="ssuser">
+              <p class="name">{{ postfeed.created_by.username }}</p>
+              <p>{{ postfeed.body }}</p>
+              <p class="info">{{ postfeed.created_at }}</p>
+            </div>
+          {% endfor %}
+          <div class="postfeed" v-for="postfeed in ssuser">
+
+              <p class="name">[[ postfeed.poster]]</p>
+            <p>[[ postfeed.body]]</p>
+            <p class="image is-256x256">
+
+            <img :src ="postfeed.feedimage">
+             </p>
+            <p class="info">[[ postfeed.created_at]]</p>
+          </div>
+</div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  new Vue({
+    el: '#feedapp',
+    delimiters: ['[[',']]'],
+    data() {
+      return{
+        ssuser: [],
+        body: '',
+        feedimage: {},
+        poster: '{{ request.user.username }}',
+        created_at: 'Now'
+      }
+    },
+    methods: {
+
+      submitpostfeed(){
+        console.log('submitpostfeed');
+
+
+        if(this.body.length > 0){
+         var postfeed = {
+            'body': this.body,
+            'poster': this.poster,
+            'feedimage': this.photo.data, this.photo.name,
+            'created_at': this.created_at
+          };
+
+
+          this.ssuser.unshift(postfeed)
+
+          // send to backend
+        fetch('/api/add_PostFeed/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(postfeed)
+                    })
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                }
+        this.body ='';
+        this.feedimage = null;
+
+      }
+
+    }
+
+
+  })
+</script>
+
+{% endblock %}

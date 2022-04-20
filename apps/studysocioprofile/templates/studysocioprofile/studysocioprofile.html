@@ -1,0 +1,123 @@
+{% extends 'core/base.html'  %}
+{% load humanize %}
+{% block content %}
+<div class="container" id ="studysocioprofileapp">
+    <div class="columns">
+      <div class="column is-12">
+          <h1 class="title">{{ user.username }}</h1>
+          {% if user.studysocioprofile.avatar %}
+            <figure class="image is-128x128">
+                <img src="{{ user.studysocioprofile.avatar.url }}">
+            </figure>
+           {% endif %}
+
+          <p><a href="{% url 'followers' user.username %}"> followers: {{ user.studysocioprofile.followed_by.count }}</a></p>
+          <p><a href="{% url 'follows' user.username %}"> follows: {{ user.studysocioprofile.follows.count }}</a></p>
+
+          {% if user != request.user %}
+            {% if request.user.studysocioprofile in user.studysocioprofile.followed_by.all %}
+                <a href="{% url 'unfollow_ssuser' user.username %}" class="button is-danger">Unfollow</a>
+             {% else %}
+                <a href="{% url 'follow_ssuser' user.username %}" class="button is-success">Follow</a>
+             {% endif %}
+          {% endif %}
+    {% if user == request.user.studysocioprofile.follows or user == request.user.studysocioprofile.user %}
+          <h2 class="title">Your Recent Posts</h2>
+      </div>
+    </div>
+<div class="columns">
+      <div class="column is-8">
+
+          <div class="wrapper-ssuser">
+              {% for postfeed in ssuser %}
+              <div class="postfeed">
+                  <article class="media">
+                      <figure class="media-left">
+                          <p class="image is-64x64">
+                              {% if user.studysocioprofile.avatar %}
+                <img src="{{ user.studysocioprofile.avatar.url }}">
+                              {% endif %}
+                          </p>
+                      </figure>
+                      <div class="media-content">
+                          <div class="content">
+                              <p>
+                                  <strong>@ {{ postfeed.created_by.username }}</strong>
+                                  <small>{{ postfeed.created_at|naturaltime }}</small>
+                                  <br>
+                                  {{ postfeed.body }}
+                                  <br>
+                                  {% if postfeed.feedimage %}
+                                    <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
+                                  {% endif %}
+                                   <br>
+                                  <a @click="likePostFeed({{ postfeed.id }})" v-if="!liked_postfeed.includes({{ postfeed.id }})">Like</a>
+                                  <span v-if="liked_postfeed.includes({{ postfeed.id }})">Liked</span>
+                                  <small id="likes-{{ postfeed.id }}">{{ postfeed.likes.count }} likes</small>
+
+                              </p>
+                          </div>
+                      </div>
+                  </article>
+              </div>
+              {% endfor %}
+          </div>
+
+</div>
+</div>
+
+      </div>
+    </div>
+   {% endif %}
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+  new Vue({
+    el: '#studysocioprofileapp',
+    delimiters: ['[[',']]'],
+    data() {
+      return{
+
+        liked_postfeed:[{% for postfeed in ssuser  %} {% if postfeed.liked %}{{ postfeed.id }},{% endif %}{% endfor %}]
+      }
+    },
+    methods: {
+      likePostFeed(postfeed_id) {
+            this.liked_postfeed.push(parseInt(postfeed_id))
+
+            var postfeed = {
+            'PostFeed_id': postfeed_id
+            };
+
+      fetch('/api/add_like/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(postfeed)
+                    })
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+                    const el = document.getElementById('likes-' + postfeed_id);
+                    const likes = parseInt(el.innerHTML.split(' ')[0] + 1);
+                    el.innerHTML = likes+ 'likes';
+                }
+      }
+
+  })
+</script>
+
+
+
+{% endblock %}

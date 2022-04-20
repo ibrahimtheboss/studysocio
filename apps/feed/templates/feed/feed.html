@@ -1,0 +1,259 @@
+{% extends 'core/base.html'%}
+{% load humanize %}
+
+{% block content %}
+
+  <div class="container" id="feedapp">
+    <div class="columns">
+      <div class="column is-6">
+        <div class="wrapper-form">
+
+        <form method = "post" enctype="multipart/form-data" onSubmit="">
+            <!--<<form method v-on:submit.prevent="submitpostfeed()" enctype="multipart/form-data">-->
+            <div class="field">
+              {% csrf_token %}
+              <div class="control">
+                <textarea class="textarea" v-model="body" name="body" id="body" placeholder="What are you Posting?"></textarea>
+                <!--{{ form.as_p }}-->
+                <input type="file"  name="feedimage" id="feedimage" accept="image/*"  onchange="return ValidateFileUpload()" />
+
+
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button id="submit" class="button is-success" type="submit">Post</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+           <div class="wrapper-ssuser">
+          {% for postfeed in ssuser %}
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <p class="card-title"> <strong>@ {{ postfeed.created_by.username }}</strong>
+                        <small>{{ postfeed.created_at|naturaltime }}</small>
+
+                    </p>
+
+                  <div class="card-body">
+                    <h5 class="card-title">
+                                  </h5>
+
+             <article class="media">
+                    <br>
+                      <figure class="media-left">
+                          <p class="image is-64x64">
+                              {% if postfeed.created_by.studysocioprofile.avatar %}
+                <img src="{{ postfeed.created_by.studysocioprofile.avatar.url }}">
+                              {% endif %}
+                          </p>
+                      </figure>
+                      <div class="media-content">
+                          <div class="content">
+                              <p>
+
+                                  <br>
+                                  {{ postfeed.body }}
+                                  <br>
+                                  {% if postfeed.feedimage %}
+                                    <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
+                                  {% endif %}
+                                  <br>
+                                  <a @click="likePostFeed({{ postfeed.id }})" v-if="!liked_postfeed.includes({{ postfeed.id }})">Like</a>
+                                  <span v-if="liked_postfeed.includes({{ postfeed.id }})">Liked</span>
+                                  <small id="likes-{{ postfeed.id }}">{{ postfeed.likes.count }} likes</small>
+
+                                      {% if postfeed.created_by == request.user.studysocioprofile.user %}
+                                        <form action="delete/{{ postfeed.id }}" method="post">
+
+                                       {% csrf_token %}
+                                         <input type="submit" class="button is-warning" value="Delete">
+                                        </form>
+                                       {% endif %}
+                              </p>
+                          </div>
+
+                      </div>
+                  </article>
+                  </div>
+                 </div>
+                </div>
+
+
+
+          {% endfor %}
+               </div>
+
+
+
+           <div class="wrapper-ssuser">
+          <div class="postfeed" v-for="postfeed in ssuser">
+
+              <p class="name">[[ postfeed.poster]]</p>
+            <p>[[ postfeed.body]]</p>
+            <p class="image is-256x256">
+
+            <img :src ="postfeed.feedimage">
+             </p>
+            <p class="info">[[ postfeed.created_at]]</p>
+          </div>
+</div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  new Vue({
+    el: '#feedapp',
+    delimiters: ['[[',']]'],
+    data() {
+      return{
+        ssuser: [],
+        body: '',
+        feedimage: '',
+        poster: '{{ request.user.username }}',
+        created_at: 'Now',
+        liked_postfeed:[{% for postfeed in ssuser  %} {% if postfeed.liked %}{{ postfeed.id }},{% endif %}{% endfor %}]
+      }
+    },
+    methods: {
+      likePostFeed(postfeed_id) {
+            this.liked_postfeed.push(parseInt(postfeed_id))
+
+            var postfeed = {
+            'PostFeed_id': postfeed_id
+            };
+
+      fetch('/api/add_like/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(postfeed)
+                    })
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+                    const el = document.getElementById('likes-' + postfeed_id);
+                    const likes = parseInt(el.innerHTML.split(' ')[0] + 1);
+                    el.innerHTML = likes+ 'likes';
+                },
+
+
+
+
+     },
+     submitpostfeed(){
+        console.log('submitpostfeed');
+
+
+        if(this.body.length > 0){
+         var postfeed = {
+            'body': this.body,
+            'poster': this.poster,
+            'feedimage': this.photo.data,
+            'created_at': this.created_at
+          };
+
+
+          this.ssuser.unshift(postfeed)
+
+          // send to backend
+        fetch('/api/add_PostFeed/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(postfeed)
+                    })
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                }
+        this.body ='';
+        this.feedimage = null;
+
+      }
+
+
+
+
+
+
+  })
+</script>
+
+// adjax calll
+<script>
+
+</script>
+
+
+
+
+
+<script>
+
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+
+
+     function ValidateFileUpload() {
+        var fuData = document.getElementById('feedimage');
+        var FileUploadPath = fuData.value;
+
+//To check if user upload any file
+        if (FileUploadPath == '') {
+            alert("Please upload an image");
+
+        } else {
+            var Extension = FileUploadPath.substring(
+                    FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+
+//The file uploaded is an image
+
+if (Extension == "png"
+     || Extension == "jpeg" || Extension == "jpg") {
+
+// To Display
+                if (fuData.files && fuData.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        $('#blah').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(fuData.files[0]);
+                }
+
+            }
+
+//The file upload is NOT an image
+else {
+                alert("Photo only allows file types of  PNG, JPG, JPEG. ");
+                window.location.reload();
+
+            }
+        }
+    }
+
+</script>
+{% endblock %}

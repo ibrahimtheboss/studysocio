@@ -1,0 +1,15 @@
+<ul class="allusers">
+    {% for user in ssusers %}
+    {% if not user.is_superuser %}
+    {% if user not in request.user.studysocioprofile.followed_by.all amd user =/= request.user %}
+    <h1>{{user}} <a href="/send_friend_request/{{user.id}}">send freind request</a></h1>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+</ul>
+
+{% for followrequest in request.user.studysocioprofile.follows.all %}
+                  <h1>{{followrequest.from_user}}
+                      <a href="/accept_friend_request/{{followrequest.id}}/">accept friend request</a>
+                  </h1>
+{% endfor %}
