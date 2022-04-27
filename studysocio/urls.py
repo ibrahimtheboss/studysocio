@@ -16,17 +16,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+
 from apps.core.views import frontpage, signup
 from apps.feed.views import feed, displayfeed,deletefeed, search
+from apps.groupconversation.views import create_group, add_member
+from apps.notification.api import NotificationCheck #getnotification
+from apps.notification.views import notifications, notificationsclear
 from apps.studysocioprofile.views import studysocioprofile, follow_ssuser, unfollow_ssuser, removefollow_ssuser, \
     send_friend_request, accept_friend_request, followers, follows, edit_profile
+from apps.directconversation.views import directconversations, directconversation,deletemessage
 
 from django.contrib.auth import views
 
 from django.conf import settings
 from django.conf.urls.static import static
 
-from apps.feed.api import api_add_postfeed, api_like_postfeed
+from apps.feed.api import api_add_postfeed, api_like_postfeed,api_display
+from apps.directconversation.api import api_add_message
 
 urlpatterns = [
     # admin part
@@ -39,28 +45,43 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(template_name='core/login.html'), name='login'),
 
     path('feed/', feed, name='feed'),
+    path('feed/delete/<int:id>', deletefeed, name='deletefeed'),
     path('search/', search, name='search'),
+
     path('u/<str:username>/', studysocioprofile, name='studysocioprofile'),
     path('edit_profile/', edit_profile, name='edit_profile'),
 
     path('u/<str:username>/follow', follow_ssuser, name='follow_ssuser'),
     path('u/<str:username>/unfollow', unfollow_ssuser, name='unfollow_ssuser'),
     path('u/<str:username>/removefollow_ssuser', removefollow_ssuser, name='removefollow_ssuser'),
-    path('feed/delete/<int:id>', deletefeed, name='deletefeed'),
-    path('displayfeed/', displayfeed, name='displayfeed'),
-
     path('u/<str:username>/followers', followers, name='followers'),
     path('u/<str:username>/follows', follows, name='follows'),
+
+    #path('displayfeed/', displayfeed, name='displayfeed'),
+
+    # messagings
+    path('directconversations/', directconversations, name='directconversations'),
+    path('directconversations/<int:user_id>', directconversation, name='directconversation'),
+    path('directconversations/<int:user_id>/delete/<int:message_id>', deletemessage, name='deletemessage'),
+
+    path('create_group/', create_group, name='create_group'),
+    path('add_members/', add_member, name='add_members'),
 
 
 
     path('send_friend_request/<int:userID>', send_friend_request,name='send_friend_request'),
     path('accept_friend_request/<int:userID>', accept_friend_request,name='accept_friend_request'),
 
+    path('notifications/', notifications, name='notifications'),
+    path('notificationsclear/', notificationsclear, name='notificationsclear'),
+    path('ajax_notification/', NotificationCheck.as_view()),
+
+
     ##api#
     path('api/add_like/', api_like_postfeed, name='api_like_postfeed'),
-     #path('api/add_PostFeed/', api_add_postfeed, name='api_add_PostFeed'),
-
+    path('api/api_display/', api_display, name='api_display'),
+    path('api/api_add_message/', api_add_message, name='api_add_message'),
+    #path('api/noticount/', getnotification, name='getnotification'),
 ]
 
 if settings.DEBUG:

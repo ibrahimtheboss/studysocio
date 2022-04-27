@@ -26,12 +26,10 @@ def feed(request):
         for poster in request.user.studysocioprofile.follows.all():
             userids.append(poster.user.id)
 
-
         ssuser = PostFeed.objects.filter(created_by_id__in=userids)
         context = {
             'ssuser': ssuser,
         }
-
 
         for postfeed in ssuser:
             likes = postfeed.likes.filter(created_by_id=request.user.id)
@@ -88,10 +86,10 @@ def deletefeed(request, id):
     postfeed = PostFeed.objects.get(id=id)  # we need this for both GET and POST
 
     if request.method == 'POST':
-        # delete the band from the database
+        # delete the feed from the database
         if request.user.studysocioprofile.user == postfeed.created_by:
             postfeed.delete()
-            # redirect to the bands list
+            # redirect to the feed page
             return redirect('feed')
 
         # no need for an `else` here. If it's a GET request, just continue
@@ -99,19 +97,35 @@ def deletefeed(request, id):
     return render(request, 'feed/feed.html', {'postfeed': postfeed})
 
 
+
+
+
+
+
+
 @login_required
 def search(request):
     query = request.GET.get('query', '')
 
+
+
     if len(query) > 0:
+        Teacher, Student,Admin= 'Teacher','Student','Admin'
+
+
         ssusers = User.objects.filter(username__icontains=query)
+        ssusers = ssusers.filter(studysocioprofile__designation__in =[Teacher, Student])
+
+        postfeed = PostFeed.objects.filter(body__icontains='#'+query)
 
     else:
         ssusers = []
+        postfeed = []
 
     context = {
         'query': query,
-        'ssusers': ssusers
+        'ssusers': ssusers,
+        'postfeed': postfeed
     }
 
     return render(request, 'feed/search.html', context)

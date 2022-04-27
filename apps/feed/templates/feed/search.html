@@ -31,24 +31,86 @@
           <hr>
           <div class="search-results">
               <div class="columns">
-      <div class="column is-4">
-              {% for ssuser in ssusers %}
-              <div><br>
+      <div class="column is-8">
+              {% if not ssusers and not postfeed %}
+                    <p>Sorry !! No results, please try a different search term...</p>
+              {% endif %}
+              {% if ssusers %}
+                    <strong>Study-Socio-Members</strong>
+                  {% for ssuser in ssusers %}
+                  <div><br>
+                          <figure class="media-left">
+                              <p class="image is-64x64">
+                                  {% if ssuser.studysocioprofile.avatar %}
+                    <img src="{{ ssuser.studysocioprofile.avatar.url }}">
+                                  {% endif %}
+                              </p>
+                              <p class="media-right"><a href="{% url 'studysocioprofile' ssuser.username %}">{{ ssuser.username }}</a> </p>
+                          </figure>
+
+                  </div>
+                  {% endfor %}
+              {% endif %}
+              {% if postfeed %}
+          <hr>
+                <strong>Related Posts</strong>
+                <div class="wrapper-ssuser">
+                    {% for postfeed in postfeed %}
+
+                    <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <p class="card-title"><a href="{% url 'studysocioprofile' postfeed.created_by.username %}"> <strong>@ {{ postfeed.created_by.username }}</strong> </a>
+                        <small>{{ postfeed.created_at|naturaltime }}</small>
+
+                    </p>
+
+                  <div class="card-body">
+                    <h5 class="card-title">
+                                  </h5>
+
+             <article class="media">
+                    <br>
                       <figure class="media-left">
                           <p class="image is-64x64">
-                              {% if ssuser.studysocioprofile.avatar %}
-                <img src="{{ ssuser.studysocioprofile.avatar.url }}">
+                              {% if postfeed.created_by.studysocioprofile.avatar %}
+                <img src="{{ postfeed.created_by.studysocioprofile.avatar.url }}">
                               {% endif %}
                           </p>
-                          <p class="media-right"><a href="{% url 'studysocioprofile' ssuser.username %}">{{ ssuser.username }}</a> </p>
                       </figure>
+                      <div class="media-content">
+                          <div class="content">
+                              <p>
 
-              </div>
+                                  <br>
+                                  {{ postfeed.body }}
+                                  <br>
+                                  {% if postfeed.feedimage %}
+                                    <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
+                                  {% endif %}
 
+                              </p>
+                          </div>
+
+                      </div>
+                  </article>
+                  </div>
+                 </div>
+                </div>
+
+                    {% endfor %}
+             {% endif %}
+
+
+
+
+
+
+
+                </div>
       </div>
               </div>
 
-              {% endfor %}
+
           </div>
       </div>
     </div>

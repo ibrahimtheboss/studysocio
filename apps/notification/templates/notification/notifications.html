@@ -1,0 +1,64 @@
+{% extends 'core/base.html'%}
+{% load humanize %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="columns">
+      <div class="column is-12">
+          <h1 class="title">Notifications</h1>
+
+          {% if not notifications %}
+            <p>You have no Nofifications!!</p>
+          {% endif %}
+
+          <div class="wrapper-ssuser">
+            {% for notification in notifications %}
+                  <article class="media">
+                      <figure class="media-left">
+                          <p class="image is-64x64">
+                              {% if notification.created_by.studysocioprofile.avatar %}
+                <img src="{{ notification.created_by.studysocioprofile.avatar.url }}">
+                              {% endif %}
+                          </p>
+                      </figure>
+                      <div class="media-content">
+                          <div class="content">
+                              <p>
+                                  {% if notification.notification_type == 'message' %}
+                                    <a href="{% url 'notifications' %}?goto=directconversation&notification={{ notification.id }}">
+                                        <strong>{{ notification.created_by.username}}</strong> Sent you a message
+                                        <small>{{ notification.created_at|naturaltime }}</small>
+                                    </a>
+                                  {% elif notification.notification_type == 'follower' %}
+                                    <a href="{% url 'notifications' %}?goto=studysocioprofile&notification={{ notification.id }}">
+                                        <strong>{{ notification.created_by.username}}</strong> Started following You
+                                        <small>{{ notification.created_at|naturaltime }}</small>
+                                    </a>
+                                  {% elif notification.notification_type == 'like' %}
+                                    <a href="{% url 'notifications' %}?goto=studysocioprofile&notification={{ notification.id }}">
+                                        {% if notification.created_by.username == request.user.username  %}
+                                            <strong>You </strong> liked your post
+                                        {% else %}
+                                            <strong>{{ notification.created_by.username}}</strong> liked your post
+                                        {% endif %}
+                                        <small>{{ notification.created_at|naturaltime }}</small>
+                                    </a>
+                                  {% endif  %}
+
+
+                              </p>
+                          </div>
+                      </div>
+                  </article>
+              {% endfor %}
+                                        <form action="{% url 'notificationsclear' %}" method="post">
+
+                                       {% csrf_token %}
+                                         <input type="submit" class="button is-warning" value="Clear All">
+                                        </form>
+          </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

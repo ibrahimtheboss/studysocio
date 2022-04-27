@@ -1,6 +1,10 @@
 {% extends 'core/base.html'%}
 {% load humanize %}
 
+{% block upperscript%}
+
+{% endblock %}
+
 {% block content %}
 
   <div class="container" id="feedapp">
@@ -13,7 +17,7 @@
             <div class="field">
               {% csrf_token %}
               <div class="control">
-                <textarea class="textarea" v-model="body" name="body" id="body" placeholder="What are you Posting?"></textarea>
+                <textarea class="textarea" v-model="body" name="body" id="body" placeholder="What are you Posting?" ></textarea>
                 <!--{{ form.as_p }}-->
                 <input type="file"  name="feedimage" id="feedimage" accept="image/*"  onchange="return ValidateFileUpload()" />
 
@@ -22,17 +26,17 @@
             </div>
             <div class="field">
               <div class="control">
-                <button id="submit" class="button is-success" type="submit">Post</button>
+                <button id="submit" onclick="divide()" class="button is-success"  type="submit">Post</button>
               </div>
             </div>
           </form>
         </div>
 
-           <div class="wrapper-ssuser">
+           <div class="wrapper-ssuser" id="here">
           {% for postfeed in ssuser %}
             <div class="col-lg-4 mb-4">
                 <div class="card">
-                    <p class="card-title"> <strong>@ {{ postfeed.created_by.username }}</strong>
+                    <p class="card-title"> <strong>@ <a href="{% url 'studysocioprofile' postfeed.created_by.username %}">{{ postfeed.created_by.username }}</a></strong>
                         <small>{{ postfeed.created_at|naturaltime }}</small>
 
                     </p>
@@ -52,11 +56,14 @@
                       </figure>
                       <div class="media-content">
                           <div class="content">
+                              <p class="text">
+                                  <br>
+                                  {{ postfeed.body|linebreaks|urlizetrunc:15 }}
+                                  <br>
+                              </p>
                               <p>
 
-                                  <br>
-                                  {{ postfeed.body }}
-                                  <br>
+
                                   {% if postfeed.feedimage %}
                                     <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
                                   {% endif %}
@@ -147,8 +154,8 @@
                     });
 
                     const el = document.getElementById('likes-' + postfeed_id);
-                    const likes = parseInt(el.innerHTML.split(' ')[0] + 1);
-                    el.innerHTML = likes+ 'likes';
+                    const likes = parseInt(el.innerHTML.split(' ')[0]) + 1;
+                    el.innerHTML = likes + ' likes';
                 },
 
 
@@ -212,7 +219,7 @@
 <script>
 
     if ( window.history.replaceState ) {
-        window.history.replaceState( null, null, window.location.href );
+        window.history.replaceState( null, "", window.location.href );
     }
 
 
@@ -255,5 +262,21 @@ else {
         }
     }
 
+function divide() {
+            var body;
+            body = document.getElementById('body').value;
+            var text = txt.split(".");
+            var str = text.join('.</br>');
+            document.write(str);
+        }
+
+</script>
+
+     <script>
+//$(document).ready(function(){
+//setInterval(function(){
+//      $("#here").load(document.URL + " #here" );
+//}, 3000);
+//});
 </script>
 {% endblock %}

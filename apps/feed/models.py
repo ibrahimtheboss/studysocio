@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class PostFeed(models.Model):
-    body = models.CharField(max_length=1000)
+    body = models.TextField(max_length=1000)
     feedimage = models.ImageField(upload_to='images/', blank=True, null=True)
     created_by = models.ForeignKey(User, related_name='ssuser', on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)

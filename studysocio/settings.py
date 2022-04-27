@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
 
+    'apps.groupconversation',
+    'apps.notification',
+    'apps.directconversation',
     'apps.core',
     'apps.studysocioprofile',
     'apps.feed',
@@ -73,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.notification.context_processors.notifications'
             ],
         },
     },

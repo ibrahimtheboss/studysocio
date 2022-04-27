@@ -9,6 +9,7 @@ from .forms import StudySocioProfileForm
 
 # Create your views here.
 from apps.studysocioprofile.models import FollowRequest, StudySocioProfile
+from apps.notification.utilities import create_notification
 
 
 @login_required
@@ -54,6 +55,7 @@ def follow_ssuser(request, username):
     user = get_object_or_404(User, username=username)
 
     request.user.studysocioprofile.follows.add(user.studysocioprofile)
+    create_notification(request, user, 'follower')
 
     return redirect('studysocioprofile', username=username)
 

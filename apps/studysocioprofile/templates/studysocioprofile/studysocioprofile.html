@@ -15,6 +15,7 @@
           <p><a href="{% url 'follows' user.username %}"> follows: {{ user.studysocioprofile.follows.count }}</a></p>
 
           {% if user != request.user %}
+            <a href="{% url 'directconversation' user.id %}" class="button is-info">Send message</a>
             {% if request.user.studysocioprofile in user.studysocioprofile.followed_by.all %}
                 <a href="{% url 'unfollow_ssuser' user.username %}" class="button is-danger">Unfollow</a>
              {% else %}
@@ -26,7 +27,7 @@
       </div>
     </div>
 <div class="columns">
-      <div class="column is-8">
+      <div class="column is-12">
 
           <div class="wrapper-ssuser">
               {% for postfeed in ssuser %}
@@ -45,7 +46,7 @@
                                   <strong>@ {{ postfeed.created_by.username }}</strong>
                                   <small>{{ postfeed.created_at|naturaltime }}</small>
                                   <br>
-                                  {{ postfeed.body }}
+                                  {{ postfeed.body|linebreaks|urlizetrunc:15 }}
                                   <br>
                                   {% if postfeed.feedimage %}
                                     <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
@@ -110,7 +111,7 @@
                     });
 
                     const el = document.getElementById('likes-' + postfeed_id);
-                    const likes = parseInt(el.innerHTML.split(' ')[0] + 1);
+                    const likes = parseInt(el.innerHTML.split(' ')[0]) + 1;
                     el.innerHTML = likes+ 'likes';
                 }
       }
