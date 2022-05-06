@@ -22,7 +22,7 @@
                 <a href="{% url 'follow_ssuser' user.username %}" class="button is-success">Follow</a>
              {% endif %}
           {% endif %}
-    {% if user == request.user.studysocioprofile.follows or user == request.user.studysocioprofile.user %}
+    {% if user == request.user.studysocioprofile.follows or user.studysocioprofile.profilestatus == 'Public' or user == request.user.studysocioprofile.user %}
           <h2 class="title">Your Recent Posts</h2>
       </div>
     </div>

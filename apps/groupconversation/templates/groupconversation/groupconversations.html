@@ -1,0 +1,28 @@
+{% extends 'core/base.html'  %}
+{% load humanize %}
+{% block content %}
+<div class="container">
+    <div class="columns">
+      <div class="column is-12">
+          <h1 class="title">Conversations</h1>
+
+          <div class="conversations-list">
+              {% for groupconversation in groupconversations %}
+                <div class="conversations-list-item">
+                    {% if request.user == groupconversation.users %}
+
+                            <a href="{% url 'groupconversation' groupconversation.groupconversation.id %}">
+                            <p>{{ groupconversation.groupconversation.name }} - {{ groupconversation.groupconversation.modified_at|naturaltime }}</p>
+                            </a>
+
+                    {% endif %}
+              {% empty %}
+                    <p>No conversations!</p>
+                </div>
+              {% endfor %}
+          </div>
+
+      </div>
+    </div>
+</div>
+{% endblock %}

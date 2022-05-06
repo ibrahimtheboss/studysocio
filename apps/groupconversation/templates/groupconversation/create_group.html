@@ -3,7 +3,7 @@
 <div class="container">
     <div class="columns">
       <div class="column is-12">
-          <h1 class="title">Edit Profile</h1>
+          <h1 class="title">Create Group </h1>
            {% if user.studysocioprofile.avatar %}
             <figure class="image is-128x128">
                 <img src="{{ user.studysocioprofile.avatar.url }}">
@@ -13,8 +13,7 @@
           <h3 class="bold">Username : @ {{ user.username }}</h3>
           <hr>
           <h3 class="bold">Designation :  {{ user.studysocioprofile.designation }}</h3>
-          <h3 class="bold">Profile Status :  {{ user.studysocioprofile.profilestatus }}</h3>
-          <h3 class="bold">Profile Status :  {{ user.studysocioprofile.gender }}</h3>
+
           <hr>
 
           <form method="post" enctype="multipart/form-data" action=".">

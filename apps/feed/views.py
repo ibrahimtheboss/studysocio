@@ -1,4 +1,4 @@
-import re
+import re  # regular expressions
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -15,6 +15,7 @@ from .forms import PostFeedForm
 # def feed(request):
 #    return render(request, 'feed/feed.html')
 from .models import PostFeed
+from ..notification.utilities import create_notification
 from ..studysocioprofile.models import StudySocioProfile
 
 
@@ -61,6 +62,10 @@ def feed(request):
                     result = result[1]
 
                     print(result)
+                    # get user form database and do filtering
+                    if User.objects.filter(username=result).exists() and result != request.user.username:
+                        # creating the notification if someone mentions you, or you mention them
+                        create_notification(request, User.objects.get(username=result), 'mention')
 
                 return redirect('feed')
             else:
@@ -97,26 +102,17 @@ def deletefeed(request, id):
     return render(request, 'feed/feed.html', {'postfeed': postfeed})
 
 
-
-
-
-
-
-
 @login_required
 def search(request):
     query = request.GET.get('query', '')
 
-
-
     if len(query) > 0:
-        Teacher, Student,Admin= 'Teacher','Student','Admin'
-
+        Teacher, Student, Admin = 'Teacher', 'Student', 'Admin'
 
         ssusers = User.objects.filter(username__icontains=query)
-        ssusers = ssusers.filter(studysocioprofile__designation__in =[Teacher, Student])
+        ssusers = ssusers.filter(studysocioprofile__designation__in=[Teacher, Student])
 
-        postfeed = PostFeed.objects.filter(body__icontains='#'+query)
+        postfeed = PostFeed.objects.filter(body__icontains='#' + query)
 
     else:
         ssusers = []

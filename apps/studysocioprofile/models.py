@@ -33,12 +33,17 @@ class StudySocioProfile(models.Model):
     )
     designation = models.CharField(max_length=7, choices=DESIGNATION, blank=True)
     GENDER = (
-        ('M', 'Male'),
-        ('F', 'Female'),
+        ('Male', 'Male'),
+        ('Female', 'Female'),
     )
-    gender = models.CharField(max_length=1, choices=GENDER, blank=True)
+    gender = models.CharField(max_length=6, choices=GENDER, blank=True)
     country = CountryField(blank_label='(select country)')
     avatar = models.ImageField(upload_to='uploads/', blank=True, null=True)
+    PROFILESTATUS = (
+        ('Public', 'Public'),
+        ('Private', 'Private'),
+    )
+    profilestatus = models.CharField(max_length=7, choices=PROFILESTATUS, blank=True)
 
     def __str__(self):
         return f'{self.user.username}'

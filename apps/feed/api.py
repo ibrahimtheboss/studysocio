@@ -1,7 +1,8 @@
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.forms import model_to_dict
+from django.http import JsonResponse, HttpResponse
 from .models import PostFeed, Like
 from ..notification.utilities import create_notification
 
@@ -47,5 +48,42 @@ def api_display(request):
 
     ssuser = PostFeed.objects.filter(created_by_id__in=userids)
     return  JsonResponse({'ssuser': ssuser})
+
+
+@login_required
+def displayfeed1(request):
+    import json
+    userids = [request.user.id]
+
+    for poster in request.user.studysocioprofile.follows.all():
+        userids.append(poster.user.id)
+
+    ssuser = PostFeed.objects.filter(created_by_id__in=userids)
+    postfeed_list = []
+    for postfeed in ssuser:
+
+        postfeed_dict = {}
+        postfeed_dict['avatar'] =postfeed.created_by.studysocioprofile.avatar.url
+        postfeed_dict['username'] = postfeed.created_by.username
+        postfeed_dict['created_at'] = postfeed.created_at
+        postfeed_dict['body'] = postfeed.body
+        postfeed_dict['likes'] = postfeed.likes.count()
+        if postfeed.created_by == request.user.studysocioprofile.user:
+            postfeed_dict['delete'] = 'delete/'+str(postfeed.id)
+
+
+
+        postfeed_list.append(postfeed_dict)
+
+        postfeed_list = list(postfeed_list)
+
+
+
+        #data['created_at'] = ssuser
+        #data['created_by'] = model_to_dict(ssuser)
+        #upload_history =  your orm query  to fetch data
+        #json_data = json.dumps( obj_list  )
+    return JsonResponse(postfeed_list,safe = False)
+        #return HttpResponse( json_data, mimetype='application/json' )
 
 

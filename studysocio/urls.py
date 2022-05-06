@@ -19,7 +19,8 @@ from django.urls import path
 
 from apps.core.views import frontpage, signup
 from apps.feed.views import feed, displayfeed,deletefeed, search
-from apps.groupconversation.views import create_group, add_member
+from apps.groupconversation.views import create_group, add_member, groupconversations, groupconversation, \
+    listofgroupmembers
 from apps.notification.api import NotificationCheck #getnotification
 from apps.notification.views import notifications, notificationsclear
 from apps.studysocioprofile.views import studysocioprofile, follow_ssuser, unfollow_ssuser, removefollow_ssuser, \
@@ -31,7 +32,7 @@ from django.contrib.auth import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from apps.feed.api import api_add_postfeed, api_like_postfeed,api_display
+from apps.feed.api import api_add_postfeed, api_like_postfeed, api_display, displayfeed1
 from apps.directconversation.api import api_add_message
 
 urlpatterns = [
@@ -66,6 +67,9 @@ urlpatterns = [
 
     path('create_group/', create_group, name='create_group'),
     path('add_members/', add_member, name='add_members'),
+    path('groupconversations/', groupconversations, name='groupconversations'),
+    path('groupconversations/<int:group_id>', groupconversation, name='groupconversation'),
+    path('groupconversations/<int:group_id>/listofgroupmembers', listofgroupmembers, name='listofgroupmembers'),
 
 
 
@@ -82,6 +86,7 @@ urlpatterns = [
     path('api/api_display/', api_display, name='api_display'),
     path('api/api_add_message/', api_add_message, name='api_add_message'),
     #path('api/noticount/', getnotification, name='getnotification'),
+    path('api/displayfeed1/', displayfeed1, name='displayfeed1'),
 ]
 
 if settings.DEBUG:

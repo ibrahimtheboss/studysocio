@@ -2,10 +2,16 @@
 {% load humanize %}
 
 {% block upperscript%}
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <!-- Bulma Version 0.9.0-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/instaAlbum.css">
 {% endblock %}
 
 {% block content %}
+
+
 
   <div class="container" id="feedapp">
     <div class="columns">
@@ -32,10 +38,11 @@
           </form>
         </div>
 
-           <div class="wrapper-ssuser" id="here">
+           <div class="wrapper-ssuser" id="here" >
           {% for postfeed in ssuser %}
-            <div class="col-lg-4 mb-4">
-                <div class="card">
+
+            <div class="col-lg-4 mb-4" >
+                <div class="card" >
                     <p class="card-title"> <strong>@ <a href="{% url 'studysocioprofile' postfeed.created_by.username %}">{{ postfeed.created_by.username }}</a></strong>
                         <small>{{ postfeed.created_at|naturaltime }}</small>
 
@@ -86,11 +93,13 @@
                   </article>
                   </div>
                  </div>
+
                 </div>
 
 
 
           {% endfor %}
+
                </div>
 
 
@@ -109,7 +118,93 @@
 </div>
 
       </div>
+
     </div>
+      <div class="columns body-columns">
+        <div class="column is-half is-offset-one-quarter">
+            <div class="card">
+                <div class="header">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img class="is-rounded" src="https://source.unsplash.com/random/96x96" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">John Smith</p>
+                            <p class="subtitle is-6">@johnsmith</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <div class="level-item has-text-centered">
+                                <a href="">
+                                    <i class="material-icons">favorite_border</i>
+                                </a>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <a href="">
+                                        <i class="material-icons">chat_bubble_outline</i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <p>
+                            <strong>32 Likes</strong>
+                        </p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasefffffffffffffffffffffffffffffffllus nec iaculis mauris.ggggggggggggggggggggggggggggggggggggggggggggggg
+                        <a>@bulmaio</a>.
+                        <a href="#">#css</a>
+                        <a href="#">#responsive</a>
+                        <br>
+                        <time datetime="2018-1-1">11:09 PM - 1 Jan 2018</time>
+                    </div>
+                </div>
+                <div class="card-image">
+                    <figure class="image is-3by2">
+                        <img src="" alt="Placeholder image">
+                    </figure>
+                </div>
+                <div class="card-footer">
+                    <div class="columns is-mobile">
+                        <div class="column is-11">
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input is-medium" type="text" placeholder="Add a comment . . .">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column has-text-centered">
+                            <button class="button">
+                                <i class="material-icons">more_horiz</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+
+
+
+
   </div>
 
 {% endblock %}
@@ -270,6 +365,14 @@ function divide() {
             document.write(str);
         }
 
+</script>
+<script>
+//$.ajax({
+//  url: '{%  url 'feed' %}',
+// success: function(data) {
+//  $("#here").load(document.URL + " #here" );
+//  }
+//});
 </script>
 
      <script>

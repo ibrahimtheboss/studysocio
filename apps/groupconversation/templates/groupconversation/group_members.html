@@ -1,0 +1,29 @@
+{% extends 'core/base.html'  %}
+{% load humanize %}
+{% block content %}
+<div class="container">
+    <div class="columns">
+      <div class="column is-12">
+          <h1 class="title">Conversations</h1>
+
+          <div class="conversations-list">
+              {% for members in groupconversationmembers %}
+                <div class="conversations-list-item">
+                    {% if members.users == members.groupconversation.created_by %}
+                        <p> Admin is  {{ members.groupconversation.created_by }} </p>
+                    {% endif %}
+
+                    <p>{{ members.users.username }} - {{ members.added_at|naturaltime }}</p>
+
+
+
+              {% empty %}
+                    <p>No conversations!</p>
+                </div>
+              {% endfor %}
+          </div>
+
+      </div>
+    </div>
+</div>
+{% endblock %}
