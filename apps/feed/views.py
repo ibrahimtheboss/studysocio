@@ -14,7 +14,7 @@ from .forms import PostFeedForm
 # @login_required
 # def feed(request):
 #    return render(request, 'feed/feed.html')
-from .models import PostFeed
+from .models import PostFeed, ReplyFeed
 from ..notification.utilities import create_notification
 from ..studysocioprofile.models import StudySocioProfile
 
@@ -28,8 +28,11 @@ def feed(request):
             userids.append(poster.user.id)
 
         ssuser = PostFeed.objects.filter(created_by_id__in=userids)
+        for k in ssuser:
+            replypost = ReplyFeed.objects.all()
         context = {
             'ssuser': ssuser,
+            'replypost': replypost,
         }
 
         for postfeed in ssuser:
@@ -100,6 +103,40 @@ def deletefeed(request, id):
         # no need for an `else` here. If it's a GET request, just continue
 
     return render(request, 'feed/feed.html', {'postfeed': postfeed})
+
+@login_required
+def replypost(request):
+    #replypost = ReplyFeed.objects.filter(postfeed=id)  # we need this for both GET and POST
+    if request.user.is_authenticated:
+
+        if request.method == 'POST':
+            if 'replybody'in request.POST:
+                replybody = request.POST['replybody']
+                postfeed = request.POST['postfeed']
+
+            else:
+                replybody = ''
+                postfeed = ''
+
+            reply = ReplyFeed.objects.create(replybody=replybody, postfeed= PostFeed.objects.get(id=postfeed), created_by=User.objects.get(pk=request.user.id))
+            reply.save()
+                # redirect to the feed page
+            return redirect('feed')
+
+        # no need for an `else` here. If it's a GET request, just continue
+
+    return render(request, 'feed/feed.html')
+@login_required
+def viewreplypost(request,id):
+    if request.user.is_authenticated:
+        #replypost = ReplyFeed.objects.filter(postfeed=id)  # we need this for both GET and POST
+        j = ReplyFeed.objects.get(postfeed=id)
+        h =j
+        return render(request, 'feed/feed.html', {'h': h})
+            # redirect to the feed page
+
+    # no need for an `else` here. If it's a GET request, just continue
+
 
 
 @login_required

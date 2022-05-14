@@ -55,9 +55,12 @@
              <article class="media">
                     <br>
                       <figure class="media-left">
-                          <p class="image is-64x64">
+                          <p class="image is-48x48">
                               {% if postfeed.created_by.studysocioprofile.avatar %}
-                <img src="{{ postfeed.created_by.studysocioprofile.avatar.url }}">
+                <img class="avatar" src="{{ postfeed.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;">
                               {% endif %}
                           </p>
                       </figure>
@@ -91,6 +94,31 @@
 
                       </div>
                   </article>
+                      <p>{{ postfeed.replys.count }} Comments</p>
+                      {% for k in postfeed.replys.all %}
+                      <p>{{ k.created_by.username }} {{ k.replybody }}</p>
+                      {% empty %}
+                      Leave a Comment
+                      {% endfor %}
+
+
+
+                       <form method = "post" enctype="multipart/form-data" action="{% url 'replypost' %}">
+
+            <div class="field">
+              {% csrf_token %}
+              <div class="control">
+                  <textarea class="text" name="postfeed" id="postfeed" hidden  >{{postfeed.id}}</textarea>
+                <textarea class="text" name="replybody" id="replybody" placeholder="your comment?" ></textarea>
+
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button  class="button is-success"  type="submit">Post</button>
+              </div>
+            </div>
+          </form>
                   </div>
                  </div>
 

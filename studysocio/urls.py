@@ -14,18 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
-
+from apps.article.views import article
 from apps.core.views import frontpage, signup
-from apps.feed.views import feed, displayfeed,deletefeed, search
+from apps.feed.views import feed, displayfeed, deletefeed, search, replypost, viewreplypost
 from apps.groupconversation.views import create_group, add_member, groupconversations, groupconversation, \
     listofgroupmembers
 from apps.notification.api import NotificationCheck #getnotification
 from apps.notification.views import notifications, notificationsclear
 from apps.studysocioprofile.views import studysocioprofile, follow_ssuser, unfollow_ssuser, removefollow_ssuser, \
     send_friend_request, accept_friend_request, followers, follows, edit_profile
-from apps.directconversation.views import directconversations, directconversation,deletemessage
+from apps.directconversation.views import directconversations, directconversation, deletemessage, \
+    deletedirectconversations
 
 from django.contrib.auth import views
 
@@ -47,8 +48,11 @@ urlpatterns = [
 
     path('feed/', feed, name='feed'),
     path('feed/delete/<int:id>', deletefeed, name='deletefeed'),
+    path('feed/replypost', replypost, name='replypost'),
+    path('feed/viewreplypost/<int:id>', viewreplypost, name='viewreplypost'),
     path('search/', search, name='search'),
 
+    path('article/', article, name='article'),
     path('u/<str:username>/', studysocioprofile, name='studysocioprofile'),
     path('edit_profile/', edit_profile, name='edit_profile'),
 
@@ -64,6 +68,7 @@ urlpatterns = [
     path('directconversations/', directconversations, name='directconversations'),
     path('directconversations/<int:user_id>', directconversation, name='directconversation'),
     path('directconversations/<int:user_id>/delete/<int:message_id>', deletemessage, name='deletemessage'),
+    path('directconversations/<int:user_id>/deleteall/<int:directconversation_id>', deletedirectconversations, name='deletedirectconversations'),
 
     path('create_group/', create_group, name='create_group'),
     path('add_members/', add_member, name='add_members'),

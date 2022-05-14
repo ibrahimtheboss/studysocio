@@ -13,7 +13,11 @@
 
                             <a href="{% url 'directconversation' user.id %}">
                             <p>{{ user.username }} - {{ directconversation.modified_at|naturaltime }}</p>
-                            </a>
+                            </a> -<form action="{{user.id}}/deleteall/{{ directconversation.id }}" method="post">
+
+                                       {% csrf_token %}
+                                         <input type="submit" class="button is-warning" value="Delete">
+                                        </form>
                         {% endif %}
                     {% endfor %}
               {% empty %}

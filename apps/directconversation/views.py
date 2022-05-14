@@ -98,3 +98,25 @@ def deletemessage(request,user_id, message_id):
         # no need for an `else` here. If it's a GET request, just continue
 
     return render(request, 'directconversation/directconversation.html', context)
+
+@login_required
+def deletedirectconversations(request, user_id,directconversation_id):
+    message = DirectConversationMessage.objects.all().filter(directconversation=directconversation_id)  # we need this for both GET and POST
+    #deletemessage = DirectConversation.objects.filter(id= directconversation_id,users=request.user)  # we need this for both GET and POST
+    context = {
+        'message': message,
+        'deletemessage':deletemessage,
+        'user_id': user_id,
+    }
+    if request.method == 'POST':
+        # delete the feed from the database
+        if request.user.studysocioprofile.user == deletemessage:
+            message.all().delete()
+            # redirect to the feed page
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            # return redirect('directconversation',user)
+
+        # no need for an `else` here. If it's a GET request, just continue
+
+
+    return render(request, 'directconversation/directconversations.html', context)

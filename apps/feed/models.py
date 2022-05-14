@@ -19,4 +19,12 @@ class Like(models.Model):
     created_by = models.ForeignKey(User, related_name='likes', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class ReplyFeed(models.Model):
+    replybody = models.TextField(max_length=1000)
+    postfeed = models.ForeignKey(PostFeed, related_name='replys', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name='postuser', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+    class Meta:
+        ordering = ('-created_at',)
+
 

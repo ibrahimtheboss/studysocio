@@ -21,5 +21,16 @@ class PostFeedForm(forms.ModelForm):
 
         fields = ['body', 'feedimage']
 
+class PostFeedForm(forms.ModelForm):
+    replybody = forms.CharField()
+    replybody.widget.attrs.update({'placeholder': 'Name', 'style': 'width: 100px;', 'class': 'form-control'})
+
+    class Meta:
+        model = PostFeed
+        # PostFeed.feedimage = forms.ImageField(validators=[FileExtensionValidator(allowed_extensions=['jpg'])])
+
+        fields = ['body', 'feedimage']
+
+
 
 
