@@ -49,6 +49,12 @@
                                         <strong>{{ notification.created_by.username}}</strong> mentioned you in a Post
                                         <small>{{ notification.created_at|naturaltime }}</small>
                                     </a>
+
+                                  {% elif notification.notification_type == 'reply' %}
+                                    <a href="{% url 'notifications' %}?goto=feed&notification={{ notification.id }}">
+                                        <strong>{{ notification.created_by.username}}</strong> commented in a Post
+                                        <small>{{ notification.created_at|naturaltime }}</small>
+                                    </a>
                                   {% endif  %}
 
 

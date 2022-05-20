@@ -7,15 +7,35 @@
     <!-- Bulma Version 0.9.0-->
     <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
     <link rel="stylesheet" type="text/css" href="../css/instaAlbum.css">
+
+
+
 {% endblock %}
 
 {% block content %}
 
-
-
+{% now "SHORT_DATETIME_FORMAT" %}
+It is {% now "jS F Y H:i" %}
   <div class="container" id="feedapp">
     <div class="columns">
       <div class="column is-6">
+          {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+          <br>
         <div class="wrapper-form">
 
         <form method = "post" enctype="multipart/form-data" onSubmit="">
@@ -38,185 +58,166 @@
           </form>
         </div>
 
-           <div class="wrapper-ssuser" id="here" >
-          {% for postfeed in ssuser %}
-
-            <div class="col-lg-4 mb-4" >
-                <div class="card" >
-                    <p class="card-title"> <strong>@ <a href="{% url 'studysocioprofile' postfeed.created_by.username %}">{{ postfeed.created_by.username }}</a></strong>
-                        <small>{{ postfeed.created_at|naturaltime }}</small>
-
-                    </p>
-
-                  <div class="card-body">
-                    <h5 class="card-title">
-                                  </h5>
-
-             <article class="media">
-                    <br>
-                      <figure class="media-left">
-                          <p class="image is-48x48">
-                              {% if postfeed.created_by.studysocioprofile.avatar %}
-                <img class="avatar" src="{{ postfeed.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;">
-                              {% endif %}
-                          </p>
-                      </figure>
-                      <div class="media-content">
-                          <div class="content">
-                              <p class="text">
-                                  <br>
-                                  {{ postfeed.body|linebreaks|urlizetrunc:15 }}
-                                  <br>
-                              </p>
-                              <p>
-
-
-                                  {% if postfeed.feedimage %}
-                                    <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
-                                  {% endif %}
-                                  <br>
-                                  <a @click="likePostFeed({{ postfeed.id }})" v-if="!liked_postfeed.includes({{ postfeed.id }})">Like</a>
-                                  <span v-if="liked_postfeed.includes({{ postfeed.id }})">Liked</span>
-                                  <small id="likes-{{ postfeed.id }}">{{ postfeed.likes.count }} likes</small>
-
-                                      {% if postfeed.created_by == request.user.studysocioprofile.user %}
-                                        <form action="delete/{{ postfeed.id }}" method="post">
-
-                                       {% csrf_token %}
-                                         <input type="submit" class="button is-warning" value="Delete">
-                                        </form>
-                                       {% endif %}
-                              </p>
-                          </div>
-
-                      </div>
-                  </article>
-                      <p>{{ postfeed.replys.count }} Comments</p>
-                      {% for k in postfeed.replys.all %}
-                      <p>{{ k.created_by.username }} {{ k.replybody }}</p>
-                      {% empty %}
-                      Leave a Comment
-                      {% endfor %}
 
 
 
-                       <form method = "post" enctype="multipart/form-data" action="{% url 'replypost' %}">
-
-            <div class="field">
-              {% csrf_token %}
-              <div class="control">
-                  <textarea class="text" name="postfeed" id="postfeed" hidden  >{{postfeed.id}}</textarea>
-                <textarea class="text" name="replybody" id="replybody" placeholder="your comment?" ></textarea>
-
-              </div>
-            </div>
-            <div class="field">
-              <div class="control">
-                <button  class="button is-success"  type="submit">Post</button>
-              </div>
-            </div>
-          </form>
-                  </div>
-                 </div>
-
-                </div>
-
-
-
-          {% endfor %}
-
-               </div>
-
-
-
-           <div class="wrapper-ssuser">
-          <div class="postfeed" v-for="postfeed in ssuser">
-
-              <p class="name">[[ postfeed.poster]]</p>
-            <p>[[ postfeed.body]]</p>
-            <p class="image is-256x256">
-
-            <img :src ="postfeed.feedimage">
-             </p>
-            <p class="info">[[ postfeed.created_at]]</p>
-          </div>
-</div>
 
       </div>
 
     </div>
+{% for postfeed in ssuser %}
       <div class="columns body-columns">
+
         <div class="column is-half is-offset-one-quarter">
             <div class="card">
-                <div class="header">
-                    <div class="media">
-                        <div class="media-left">
-                            <figure class="image is-48x48">
-                                <img class="is-rounded" src="https://source.unsplash.com/random/96x96" alt="Placeholder image">
-                            </figure>
-                        </div>
-                        <div class="media-content">
-                            <p class="title is-4">John Smith</p>
-                            <p class="subtitle is-6">@johnsmith</p>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="card-content">
-                    <div class="level is-mobile">
-                        <div class="level-left">
-                            <div class="level-item has-text-centered">
-                                <a href="">
-                                    <i class="material-icons">favorite_border</i>
-                                </a>
-                            </div>
-                            <div class="level-item has-text-centered">
-                                <div>
-                                    <a href="">
-                                        <i class="material-icons">chat_bubble_outline</i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div class="content">
-                        <p>
-                            <strong>32 Likes</strong>
-                        </p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasefffffffffffffffffffffffffffffffllus nec iaculis mauris.ggggggggggggggggggggggggggggggggggggggggggggggg
-                        <a>@bulmaio</a>.
-                        <a href="#">#css</a>
-                        <a href="#">#responsive</a>
-                        <br>
-                        <time datetime="2018-1-1">11:09 PM - 1 Jan 2018</time>
-                    </div>
-                </div>
-                <div class="card-image">
+                        <article class="media">
+
+  <div class="media-content">
+      <div class="content">
+          <span>
+          <i class="media-left">
+    <p class="image is-64x64"style="float: left;">
+      {% if postfeed.created_by.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ postfeed.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+  border-radius: 50%; height:65px;width:90px;">
+
+                              {% endif %}
+    </p>
+
+  </i> </span>
+
+          <p class="level-left" > <strong style="font-size:20px;">&nbsp;  <b>{{postfeed.created_by.first_name}} {{postfeed.created_by.last_name}}</b> </strong><span><strong>&nbsp;&nbsp;@ <a href="{% url 'studysocioprofile' postfeed.created_by.username %}">{{ postfeed.created_by.username }}</a></strong></span>
+              <small>&nbsp; posted <i>{{ postfeed.created_at|naturaltime }}</i></small> </p>
+
+      </div>
+
+<br>
+
+    <div class="content">
+      <p>
+          {{ postfeed.body|linebreaks|urlizetrunc:15 }}
+      </p>
+        {% if postfeed.feedimage %}
+
+        <div class="card-image">
+
                     <figure class="image is-3by2">
-                        <img src="" alt="Placeholder image">
+                                    <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
                     </figure>
                 </div>
-                <div class="card-footer">
-                    <div class="columns is-mobile">
-                        <div class="column is-11">
-                            <div class="field">
-                                <div class="control">
-                                    <input class="input is-medium" type="text" placeholder="Add a comment . . .">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column has-text-centered">
-                            <button class="button">
-                                <i class="material-icons">more_horiz</i>
-                            </button>
-                        </div>
+        {% endif %}
+
+    </div>
+    <nav class="level is-mobile">
+      <div class="level-left">
+        <a class="level-item">
+          <span class="icon is-small" id="DIV{{postfeed.id}}" ><i class="fas fa-reply"></i></span>
+        </a>
+
+          <span>{{ postfeed.replys.count }} Comments</span>&nbsp;&nbsp;
+        <a class="level-item">
+          <span class="icon is-small"><i class="fas fa-retweet"></i></span>
+        </a>
+        <a class="level-item">
+             <a @click="likePostFeed({{ postfeed.id }})" v-if="!liked_postfeed.includes({{ postfeed.id }})">
+                 <span class="icon is-small"><i class="fas fa-heart"></i></span></a>
+                                  <span v-if="liked_postfeed.includes({{ postfeed.id }})"><span class="icon is-small"><i class="fas fa-heart" style="color:red;"></i></span></span>
+
+
+
+        </a>
+          &nbsp;<p><small id="likes-{{ postfeed.id }}">{{ postfeed.likes.count }} likes</small> </p>
+      </div>
+    </nav>
+
+      <div  id="{{postfeed.id}}r" style="display:none;">
+          {% for k in postfeed.replys.all %}
+          <article class="media">
+
+ <figure class="media-left">
+{% if k.created_by != request.user.studysocioprofile.user  %}
+    <p class="image is-48x48">
+        {% if k.created_by.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ k.created_by.studysocioprofile.avatar.url }}"  style=" height:48px;width:48px;">
+
+                              {% endif %}
+
+    </p>
+{% endif %}
+
+  </figure>
+  <div class="media-content">
+      <span><strong >&nbsp;  <b>{{k.created_by.first_name}} {{k.created_by.last_name}}</b> </strong></span>
+     <strong>&nbsp;@ <a href="{% url 'studysocioprofile' k.created_by.username %}">{{ k.created_by.username }}</a></strong>
+    <div  {% if k.created_by == request.user.studysocioprofile.user  %} class="notification is-success is-light"{% else %} class="content" {% endif %}><p>
+
+          {{ k.replybody }}
+
+        <span class="level-right"> <a>Like</a> &nbsp; -<small>commented</small><small>&nbsp;  <i>{{ k.created_at|naturaltime }}</i></small></span>
+      </p>
+    </div>
+
+  </div>
+          <div class="media-right">
+    <button class="delete"></button>
+
+  </div>
+</article>
+          {% empty %}
+      <p>Leave a Comment</p>
+          {% endfor %}
+<article class="media">
+  <figure class="media-left">
+    <p class="image is-64x64">
+      {% if request.user.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ request.user.studysocioprofile.avatar.url }}"  style=" height:64px;width:64px;">
+
+                              {% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+      <form method = "post" enctype="multipart/form-data" action="{% url 'replypost' %}">
+
+            <div class="field">
+              {% csrf_token %}
+              <p class="control">
+                  <textarea  name="postfeed" id="postfeed" hidden  >{{postfeed.id}}</textarea>
+                <textarea class="textarea" name="replybody" id="replybody" placeholder="Add a comment..." ></textarea>
+
+              </p>
+            </div>
+
+
+    <div class="field">
+      <p class="control">
+        <button class="button is-success" type="submit">Post comment</button>
+      </p>
+    </div>
+          </form>
+
+  </div>
+</article></div>
+  </div>
+  <div class="media-right ">
+
+      {% if postfeed.created_by == request.user.studysocioprofile.user %}
+        <form action="delete/{{ postfeed.id }}" method="post">
+
+       {% csrf_token %}
+         <button type="submit" class="delete is-warning" ></button>
+        </form>
+       {% endif %}
+  </div>
+</article>
                     </div>
                 </div>
+
             </div>
+
 
 
 
@@ -230,6 +231,7 @@
         </div>
     </div>
 
+      {% endfor %}
 
 
 
@@ -238,6 +240,8 @@
 {% endblock %}
 
 {% block script %}
+
+
 <script>
   new Vue({
     el: '#feedapp',
@@ -330,10 +334,22 @@
   })
 </script>
 
-// adjax calll
-<script>
 
-</script>
+
+   <script>
+
+      $(document).ready(function() {
+      {% for postfeed in ssuser %}
+          // Display alert message after toggle paragraphs
+          $("#DIV{{postfeed.id}}").click(function() {
+              $("#{{postfeed.id}}r").toggle(500, function() {
+
+                });
+            });{% endfor %}
+        });
+
+    </script>
+
 
 
 
@@ -395,6 +411,23 @@ function divide() {
 
 </script>
 <script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+  <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) window.scrollTo(0, scrollpos);
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+    </script>
+<script>
 //$.ajax({
 //  url: '{%  url 'feed' %}',
 // success: function(data) {
@@ -402,7 +435,17 @@ function divide() {
 //  }
 //});
 </script>
+ <script>
+ {% if messages %}
+    {% for message in messages %}
 
+   function divide() {
+      alert("{{ message }}");
+   }
+
+    {% endfor %}
+{% endif %}
+</script>
      <script>
 //$(document).ready(function(){
 //setInterval(function(){

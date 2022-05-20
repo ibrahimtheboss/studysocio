@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
+from django.contrib import messages
 from .forms import PostFeedForm
 
 # Create your views here.
@@ -17,6 +17,33 @@ from .forms import PostFeedForm
 from .models import PostFeed, ReplyFeed
 from ..notification.utilities import create_notification
 from ..studysocioprofile.models import StudySocioProfile
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+from numpy import argmax
+import PIL
+from PIL import Image
+
+
+def imagepredict(path):
+    imd = []
+    image = Image.open(path)
+    image = image.resize((256, 256))
+    image = image.convert(mode='L')
+    # image = tf.keras.preprocessing.image.load_img(path, color_mode='grayscale',
+    # target_size=(256, 256))
+    image = np.array(image)
+    imd.append(image)
+    d = np.array(imd)
+    d = d.reshape((d.shape[0], 256, 256, 1))
+    d = d.astype('float')
+    d = d / 255.0
+    d.flatten()
+    model = keras.models.load_model('static/model/model.h5')
+    y = model.predict(d)
+    imd.pop()
+    print(imd)
+    return y
 
 
 @login_required
@@ -43,9 +70,9 @@ def feed(request):
             else:
                 postfeed.liked = False
 
-        if request.method == 'POST' and not None:
+        if request.method == 'POST' and not None :
 
-            if 'body' in request.POST:
+            if 'body' in request.POST :
                 body = request.POST['body']
             else:
                 body = ''
@@ -55,7 +82,50 @@ def feed(request):
                 feedimage = ''
 
             postfeed = PostFeed(body=body, feedimage=feedimage, created_by=User.objects.get(pk=request.user.id))
-            if postfeed.body is not "" and postfeed.feedimage is not None:
+
+            if postfeed.body != "" and postfeed.feedimage !="":
+                print(postfeed.feedimage)
+                y = imagepredict(postfeed.feedimage)
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float("{:.2f}".format((y[0][0] * 100))) > 85:
+                    print("The model has predicted the image is MEME" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
+                    messages.warning(request, 'Warning the image uploaded was classified as a prohibited Image')
+                    return redirect('feed')
+
+                else:
+                    print("good image")
+                    if postfeed.body == 'go':
+                        postfeed.body = 'GO TO BED'
+                    postfeed.save()
+                    results = re.findall("(^|[^@\w])@(\w{1,20})", body)
+
+                    for result in results:
+                        result = result[1]
+
+                        print(result)
+                        # get user form database and do filtering
+                        if User.objects.filter(username=result).exists() and result != request.user.username:
+                            # creating the notification if someone mentions you, or you mention them
+                            create_notification(request, User.objects.get(username=result), 'mention')
+
+                    return redirect('feed')
+            elif postfeed.body == "" and postfeed.feedimage !="":
+                print(postfeed.feedimage)
+                y = imagepredict(postfeed.feedimage)
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float("{:.2f}".format((y[0][0] * 100))) > 85:
+                    print("The model has predicted the image is MEME" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
+                    messages.warning(request, ' Warning the image uploaded was classified as a prohibited Image')
+                    return redirect('feed')
+
+                else:
+                    print("good image")
+                    postfeed.save()
+                    messages.success(request, 'Successfully Posted!!')
+                    return redirect('feed')
+
+            elif postfeed.body != "" and postfeed.feedimage is not None:
+
                 if postfeed.body == 'go':
                     postfeed.body = 'GO TO BED'
                 postfeed.save()
@@ -69,7 +139,7 @@ def feed(request):
                     if User.objects.filter(username=result).exists() and result != request.user.username:
                         # creating the notification if someone mentions you, or you mention them
                         create_notification(request, User.objects.get(username=result), 'mention')
-
+                messages.success(request, 'Successfully Posted!!')
                 return redirect('feed')
             else:
                 return render(request, 'feed/feed.html', context)
@@ -104,13 +174,14 @@ def deletefeed(request, id):
 
     return render(request, 'feed/feed.html', {'postfeed': postfeed})
 
+
 @login_required
 def replypost(request):
-    #replypost = ReplyFeed.objects.filter(postfeed=id)  # we need this for both GET and POST
+    # replypost = ReplyFeed.objects.filter(postfeed=id)  # we need this for both GET and POST
     if request.user.is_authenticated:
 
         if request.method == 'POST':
-            if 'replybody'in request.POST:
+            if 'replybody' in request.POST:
                 replybody = request.POST['replybody']
                 postfeed = request.POST['postfeed']
 
@@ -118,25 +189,30 @@ def replypost(request):
                 replybody = ''
                 postfeed = ''
 
-            reply = ReplyFeed.objects.create(replybody=replybody, postfeed= PostFeed.objects.get(id=postfeed), created_by=User.objects.get(pk=request.user.id))
+            reply = ReplyFeed.objects.create(replybody=replybody, postfeed=PostFeed.objects.get(id=postfeed),
+                                             created_by=User.objects.get(pk=request.user.id))
             reply.save()
-                # redirect to the feed page
+            user = reply.postfeed.created_by
+            if user != request.user:
+                create_notification(request, user, 'reply')
+            # redirect to the feed page
             return redirect('feed')
 
         # no need for an `else` here. If it's a GET request, just continue
 
     return render(request, 'feed/feed.html')
+
+
 @login_required
-def viewreplypost(request,id):
+def viewreplypost(request, id):
     if request.user.is_authenticated:
-        #replypost = ReplyFeed.objects.filter(postfeed=id)  # we need this for both GET and POST
+        # replypost = ReplyFeed.objects.filter(postfeed=id)  # we need this for both GET and POST
         j = ReplyFeed.objects.get(postfeed=id)
-        h =j
+        h = j
         return render(request, 'feed/feed.html', {'h': h})
-            # redirect to the feed page
+        # redirect to the feed page
 
     # no need for an `else` here. If it's a GET request, just continue
-
 
 
 @login_required

@@ -25,6 +25,6 @@ class ReplyFeed(models.Model):
     created_by = models.ForeignKey(User, related_name='postuser', on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ('created_at',)
 
 

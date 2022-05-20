@@ -8,6 +8,7 @@ from apps.article.models import Article
 
 
 def article(request):
+    users = User.objects.all()
     if request.method =='POST':
         form = ArticleForm(request.POST, request.FILES)
 
@@ -26,6 +27,9 @@ def article(request):
         form = ArticleForm()
 
     context = {
-        'form': form
+        'form': form,
+        "users": users
     }
     return render(request, 'article/article.html', context)
+
+

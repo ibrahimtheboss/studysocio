@@ -1,7 +1,7 @@
 import re
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -139,3 +139,22 @@ def listofgroupmembers(request, group_id):
     else:
         return redirect('login')
 
+@login_required
+def deletegroupmessage(request,group_id, message_id):
+
+
+    message = GroupConversationMessage.objects.get(id=message_id)  # we need this for both GET and POST
+    context = {
+        'message': message,
+        'group_id':group_id,
+    }
+    if request.method == 'POST':
+        # delete the feed from the database
+        if request.user.studysocioprofile.user == message.created_by:
+            message.delete()
+            # redirect to the feed page
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            #return redirect('directconversation',user)
+
+        # no need for an `else` here. If it's a GET request, just continue
+    return render(request, 'groupconversation/groupconversation.html', context)

@@ -20,7 +20,7 @@ from apps.article.views import article
 from apps.core.views import frontpage, signup
 from apps.feed.views import feed, displayfeed, deletefeed, search, replypost, viewreplypost
 from apps.groupconversation.views import create_group, add_member, groupconversations, groupconversation, \
-    listofgroupmembers
+    listofgroupmembers, deletegroupmessage
 from apps.notification.api import NotificationCheck #getnotification
 from apps.notification.views import notifications, notificationsclear
 from apps.studysocioprofile.views import studysocioprofile, follow_ssuser, unfollow_ssuser, removefollow_ssuser, \
@@ -39,6 +39,7 @@ from apps.directconversation.api import api_add_message
 urlpatterns = [
     # admin part
     path('admin/', admin.site.urls),
+    path("select2/", include("django_select2.urls")),
 
     # students and teachers registering and accessing system:
     path('', frontpage, name='frontpage'),
@@ -75,7 +76,7 @@ urlpatterns = [
     path('groupconversations/', groupconversations, name='groupconversations'),
     path('groupconversations/<int:group_id>', groupconversation, name='groupconversation'),
     path('groupconversations/<int:group_id>/listofgroupmembers', listofgroupmembers, name='listofgroupmembers'),
-
+    path('groupconversations/<int:group_id>/delete/<int:message_id>', deletegroupmessage, name='deletegroupmessage'),
 
 
     path('send_friend_request/<int:userID>', send_friend_request,name='send_friend_request'),
