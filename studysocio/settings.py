@@ -13,6 +13,12 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import pytest
+import tests
+from py import test
+
+import studysocio
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -162,6 +168,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
+
+# -- FILE: pytest.ini (or tox.ini)
+# -- recommended but optional:
+#python_files = core_tests.py
 
 LANGUAGE_CODE = 'en-us'
 
