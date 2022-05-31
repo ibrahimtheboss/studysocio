@@ -1,0 +1,228 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+{% block upperscript%}
+(<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>)
+<link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <script src="https://kit.fontawesome.com/7dc3015a44.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<style>
+
+.is-shady {
+animation: flyintoright .4s backwards;
+background: #fff;
+box-shadow: rgba(0, 0, 0, .1) 0 1px 0;
+border-radius: 4px;
+display: inline-block;
+margin: 10px;
+position: relative;
+transition: all .2s ease-in-out;
+}
+.is-shady:hover {
+box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="columns">
+      <div class="column is-12 is-offset-one">
+          <h1 class="title">Article on {{ articles_Category.name }}</h1>
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'article_category' %}" >Category</a></li>
+    <li ><a href="{% url 'articles' articles_Category.id %}" aria-current="page">{{articles_Category.name}}</a></li>
+  </ul>
+</nav>
+
+           <p>Search term: "{{ query }}"</p>
+
+          <hr>
+
+          <form method="get" action="{% url 'articles' articles_Category.id %}" style="width:60%;">
+              <div class="field">
+                  <div class="control">
+                      <input type="text" class="input" name="query" value="{{ query }}">
+
+                  </div>
+              </div>
+               <div class="field">
+                  <div class="control">
+                      <button class="button is-success">Search</button>
+
+                  </div>
+              </div>
+
+
+          </form>
+          <hr>
+          <div class="search-results">
+              <div class="columns">
+      <div class="column is-12">
+              {% if articles %}
+                    <strong>Articles Related: </strong>
+                  <div><br>
+                         <div class="container">
+      <div class="section">
+        <div id="app" class="row columns is-multiline  ">
+            {% for articles in articles %}
+            <a href="{{articles.id }}/per_article/">
+
+          <div v-for="card in cardData" key="card.id" class="column is-3">
+            <div class="card large is-shady">
+              <div class="card-image">
+                <figure class="image is-16by9">
+                    {% if articles.titleimage  %}
+                <img  src="{{ articles.titleimage.url }}"
+                      style=" max-width:640px; max-height:650px;" alt="Placeholder image"
+                      class="modal-button" data-target="modal-image2">
+                {% endif %}
+                </figure>
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48">
+                      {% if articles.created_by.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ articles.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+  border-radius: 50%; height:50px;width:65px;">
+
+                              {% endif %}
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <p class="title is-4 no-padding">{{articles.title}}</p>by:{{articles.created_by.first_name}} {{articles.created_by.last_name}}
+                    <p>
+                      <span class="title is-6">
+                           @ <a href="{% url 'studysocioprofile' articles.created_by.username %}">
+                          {{articles.created_by.username}} </a> ({{articles.created_by.studysocioprofile.designation}})</span> </p>
+                    <p class="media-content">{{articles.description|truncatechars:50 }}</p>
+                  </div>
+                </div>
+                <div class="content">
+                  <i>Last Updated :{{articles.modified_at|naturaltime}}</i>
+                  <div class="background-icon"><span class="icon-twitter"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+            </a>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+
+                  </div>
+
+              {% endif %}
+
+
+ <div class="container">
+      <div class="section">
+        <div id="app" class="row columns is-multiline  ">
+            {% for articles in page_obj.object_list %}
+            <a href="{{articles.id }}/per_article/">
+
+          <div v-for="card in cardData" key="card.id" class="column is-3">
+            <div class="card large is-shady">
+              <div class="card-image">
+                <figure class="image is-16by9">
+                    {% if articles.titleimage  %}
+                <img  src="{{ articles.titleimage.url }}"
+                      style=" max-width:640px; max-height:650px;" alt="Placeholder image"
+                      class="modal-button" data-target="modal-image2">
+                {% endif %}
+                </figure>
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48">
+                      {% if articles.created_by.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ articles.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+  border-radius: 50%; height:50px;width:65px;">
+
+                              {% endif %}
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <p class="title is-4 no-padding">{{articles.title}}</p>by:{{articles.created_by.first_name}} {{articles.created_by.last_name}}
+                    <p>
+                      <span class="title is-6">
+                           @ <a href="{% url 'studysocioprofile' articles.created_by.username %}">
+                          {{articles.created_by.username}} </a> ({{articles.created_by.studysocioprofile.designation}})</span> </p>
+                    <p class="media-content">{{articles.description|truncatechars:50 }}</p>
+                  </div>
+                </div>
+                <div class="content">
+                  <i>Last Updated :{{articles.modified_at|naturaltime}}</i>
+                  <div class="background-icon"><span class="icon-twitter"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+            </a>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+</div>
+<div class="column is-4
+is-offset-4 is-centered" >
+    <nav class="pagination is-centered is-small" role="navigation" aria-label="pagination">
+        {% if page_obj.has_previous %}
+
+        <a href="?page={{ page_obj.previous_page_number }}" class="pagination-previous">« Previous page</a>
+        <ul class="pagination-list ">
+            {% if page_obj.number > 3 %}
+            <a href="?page=1" class="pagination-link">1</a>
+            {% if page_obj.number > 4 %}
+            <span>...</span>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+        </ul>
+        <ul class="pagination-list ">
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <a href="?page={{ num }}" class="pagination-link">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}"class="pagination-link">{{ num }}</a>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        <ul class="pagination-list ">
+            {% if page_obj.has_next %}
+            {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+            <span>...</span>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">{{ page_obj.paginator.num_pages }}</a>
+            {% elif page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">{{ page_obj.paginator.num_pages }}</a>
+            {% endif %}
+        </ul>
+        <a href="?page={{ page_obj.next_page_number }}" class="pagination-next">Next Page »</a>
+
+        {% endif %}
+    </nav>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

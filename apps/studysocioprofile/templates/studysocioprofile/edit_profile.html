@@ -1,8 +1,9 @@
 {% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
-    <div class="columns">
-      <div class="column is-12">
+    <div class="columns is-centered">
+      <div class="column is-6 ">
           <h1 class="title">Edit Profile</h1>
            {% if user.studysocioprofile.avatar %}
             <figure class="image is-128x128">
@@ -16,17 +17,88 @@
           <h3 class="bold">Profile Status :  {{ user.studysocioprofile.profilestatus }}</h3>
           <h3 class="bold">Profile Status :  {{ user.studysocioprofile.gender }}</h3>
           <hr>
-
           <form method="post" enctype="multipart/form-data" action=".">
               {% csrf_token %}
-              {{ form.as_p}}
-                <hr>
+<div class="field">
+  <div class="control">
+    {{ form.avatar|as_crispy_field  }}
+  </div>
+</div>
               <div class="field">
-                  <div class="control">
-                      <button class="button is-success">Save Changes</button>
+  <div class="control">
+    {{ form1.first_name|as_crispy_field  }}
+  </div>
+</div>
+                            <div class="field">
+  <div class="control">
+    {{ form1.last_name|as_crispy_field  }}
+  </div>
+</div>
+                            <div class="field">
+  <div class="control">
+    {{ form1.email|as_crispy_field  }}
+  </div>
+</div>
+
+              <div class="field">
+  <div class="control">
+    {{ form.background_image|as_crispy_field}}
+  </div>
+</div>
+<div class="field">
+  <div class="control has-icons-left has-icons-right">
+    {{ form.bio|as_crispy_field }}
+  </div>
+</div>
+              {% if user.studysocioprofile.designation == 'Student' %}
+              <div class="field">
+                  <div class="control has-icons-left has-icons-right">
+                      {{ form.field_of_study|as_crispy_field }}
                   </div>
               </div>
+              {% endif %}
+              {% if user.studysocioprofile.designation == 'Teacher' %}
+              <div class="field">
+                  <div class="control has-icons-left has-icons-right">
+                      {{ form.field_of_teaching|as_crispy_field }}
+                  </div>
+              </div>
+              {% endif %}
+               <div class="field">
+                  <div class="control has-icons-left has-icons-right">
+                      {{ form.education_center|as_crispy_field }}
+                  </div>
+              </div>
+
+
+<div class="field">
+  <div class="control">
+   {{ form.gender|as_crispy_field }}
+  </div>
+</div>
+              <div class="field">
+  <div class="control">
+   {{ form.country|as_crispy_field }}
+  </div>
+</div>
+
+<div class="field">
+    <label><span><i>(<sup>*</sup>Note if Change to Public anyone can see your profile  )</i></span></label>
+  <div class="control">
+    {{ form.profilestatus|as_crispy_field }}
+  </div>
+</div>
+
+
+
+
+<div class="field is-grouped">
+  <div class="control">
+    <button class="button is-success">Save Changes</button>
+  </div>
+</div>
           </form>
+          <a href="{% url 'change_password' %}">Change password ->></a>
       </div>
     </div>
 </div>

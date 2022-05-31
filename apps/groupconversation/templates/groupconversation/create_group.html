@@ -1,28 +1,25 @@
 {% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
     <div class="columns">
-      <div class="column is-12">
+      <div class="column is-4">
+          <span><a href="{% url 'groupconversations' %}">Go back</a></span>
           <h1 class="title">Create Group </h1>
-           {% if user.studysocioprofile.avatar %}
-            <figure class="image is-128x128">
-                <img src="{{ user.studysocioprofile.avatar.url }}">
-            </figure>
-           {% endif %}
+
           <hr>
           <h3 class="bold">Username : @ {{ user.username }}</h3>
-          <hr>
           <h3 class="bold">Designation :  {{ user.studysocioprofile.designation }}</h3>
 
           <hr>
 
           <form method="post" enctype="multipart/form-data" action=".">
               {% csrf_token %}
-              {{ form.as_p}}
+              {{ form|crispy }}
                 <hr>
               <div class="field">
                   <div class="control">
-                      <button class="button is-success">Save Changes</button>
+                      <button class="button is-success">Create</button>
                   </div>
               </div>
           </form>

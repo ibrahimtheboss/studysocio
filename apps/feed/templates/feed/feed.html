@@ -1,24 +1,26 @@
 {% extends 'core/base.html'%}
 {% load humanize %}
-
 {% block upperscript%}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <!-- Bulma Version 0.9.0-->
     <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
-    <link rel="stylesheet" type="text/css" href="../css/instaAlbum.css">
 
+ <link rel="stylesheet" href=
+"https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
 
 
 {% endblock %}
 
 {% block content %}
 
-{% now "SHORT_DATETIME_FORMAT" %}
-It is {% now "jS F Y H:i" %}
-  <div class="container" id="feedapp">
+
+
+  <div class="container" >
+      It is {% now "jS F Y H:i" %}
     <div class="columns">
-      <div class="column is-6">
+      <div class="column is-half is-offset-one-quarter" >
           {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -42,10 +44,36 @@ It is {% now "jS F Y H:i" %}
             <!--<<form method v-on:submit.prevent="submitpostfeed()" enctype="multipart/form-data">-->
             <div class="field">
               {% csrf_token %}
+                 {{form.media}}
               <div class="control">
-                <textarea class="textarea" v-model="body" name="body" id="body" placeholder="What are you Posting?" ></textarea>
-                <!--{{ form.as_p }}-->
-                <input type="file"  name="feedimage" id="feedimage" accept="image/*"  onchange="return ValidateFileUpload()" />
+                {{form.body}}
+                  <br>
+                  <label class="label">Topic: </label>
+                  <div class="control has-icons-left">
+                  <div class="select is-small">
+                   {{form.topic}}
+                  </div>
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-tag"></i>
+                  </span>
+                </div>
+                <br>
+                  <div id="file-js-example" class="file is-small has-name is-warning">
+  <label class="file-label">
+    <input class="file-input" type="file" name="feedimage" id="feedimage" accept="image/*"  onchange="return ValidateFileUpload()">
+    <span class="file-cta">
+      <span class="file-icon">
+        <i class="fas fa-upload"></i>
+      </span>
+      <span class="file-label">
+        Choose a file…
+      </span>
+    </span>
+    <span class="file-name">
+      No file uploaded
+    </span>
+  </label>
+</div>
 
 
               </div>
@@ -65,19 +93,23 @@ It is {% now "jS F Y H:i" %}
       </div>
 
     </div>
+      <div id="feedapp">
 {% for postfeed in ssuser %}
       <div class="columns body-columns">
 
         <div class="column is-half is-offset-one-quarter">
-            <div class="card">
+            <div class="card" >
                 <div class="card-content">
 
 
                     <div class="content">
-                        <article class="media">
+                        <article class="media" >
 
-  <div class="media-content">
-      <div class="content">
+  <div class="media-content" >
+
+<div class="content">
+  <div class="content" >
+                 &nbsp; &nbsp; &nbsp; &nbsp; {% if postfeed.topic %} <span class="card"{% if postfeed.topic %} style="background-color: {{postfeed.topic.colour}};"{% endif %}> &nbsp; &nbsp;  {{postfeed.topic}}&nbsp; &nbsp;</span>{% endif %}
           <span>
           <i class="media-left">
     <p class="image is-64x64"style="float: left;">
@@ -93,8 +125,10 @@ It is {% now "jS F Y H:i" %}
           <p class="level-left" > <strong style="font-size:20px;">&nbsp;  <b>{{postfeed.created_by.first_name}} {{postfeed.created_by.last_name}}</b> </strong><span><strong>&nbsp;&nbsp;@ <a href="{% url 'studysocioprofile' postfeed.created_by.username %}">{{ postfeed.created_by.username }}</a></strong></span>
               <small>&nbsp; posted <i>{{ postfeed.created_at|naturaltime }}</i></small> </p>
 
-      </div>
 
+
+  </div>
+</div>
 <br>
 
     <div class="content">
@@ -125,11 +159,9 @@ It is {% now "jS F Y H:i" %}
         <a class="level-item">
              <a @click="likePostFeed({{ postfeed.id }})" v-if="!liked_postfeed.includes({{ postfeed.id }})">
                  <span class="icon is-small"><i class="fas fa-heart"></i></span></a>
-                                  <span v-if="liked_postfeed.includes({{ postfeed.id }})"><span class="icon is-small"><i class="fas fa-heart" style="color:red;"></i></span></span>
-
-
 
         </a>
+          <span v-if="liked_postfeed.includes({{ postfeed.id }})"><span class="icon is-small"><i class="fas fa-heart" style="color:red;"></i></span></span>
           &nbsp;<p><small id="likes-{{ postfeed.id }}">{{ postfeed.likes.count }} likes</small> </p>
       </div>
     </nav>
@@ -162,10 +194,44 @@ It is {% now "jS F Y H:i" %}
     </div>
 
   </div>
+              {% if k.created_by == request.user %}
+
           <div class="media-right">
-    <button class="delete"></button>
+                      <div id="modal-js-reply" class="modal">
+  <div class="modal-background"></div>
+
+  <div class="modal-content">
+    <div class="box">
+      <div class="container">
+      <h1>Delete Comment</h1>
+      <p>Are you sure you want to delete your Comment ?</p>
+<br>
+      <div>
+          <div class="columns is-centered is-mobile">
+              <form class="row">
+        <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
+</form>
+              &nbsp; &nbsp;&nbsp; &nbsp;
+         <form class="row" action="replypost/{{ k.id }}/deletereplyfeed/" method="post">
+
+       {% csrf_token %}
+         <button type="submit"  class="button is-danger" > Delete</button>
+        </form>
+              </div>
+      </div>
+    </div>
+      <!-- Your content -->
+    </div>
+  </div>
+
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+    <div class="js-modal-trigger" data-target="modal-js-reply">
+        <button class="delete"></button>
+</div>
 
   </div>
+              {% endif %}
 </article>
           {% empty %}
       <p>Leave a Comment</p>
@@ -202,14 +268,45 @@ It is {% now "jS F Y H:i" %}
   </div>
 </article></div>
   </div>
+
+
+
   <div class="media-right ">
 
       {% if postfeed.created_by == request.user.studysocioprofile.user %}
-        <form action="delete/{{ postfeed.id }}" method="post">
+        <div id="modal-js-example" class="modal">
+  <div class="modal-background"></div>
+
+  <div class="modal-content">
+    <div class="box">
+      <div class="container">
+      <h1>Delete Post</h1>
+      <p>Are you sure you want to delete your Post ?</p>
+<br>
+      <div>
+          <div class="columns is-centered is-mobile">
+              <form class="row">
+        <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
+</form>
+              &nbsp; &nbsp;&nbsp; &nbsp;
+         <form class="row" action="delete/{{ postfeed.id }}" method="post">
 
        {% csrf_token %}
-         <button type="submit" class="delete is-warning" ></button>
+         <button type="submit"  class="button is-danger" > Delete</button>
         </form>
+              </div>
+      </div>
+    </div>
+      <!-- Your content -->
+    </div>
+  </div>
+
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+    <div class="js-modal-trigger" data-target="modal-js-example">
+        <button class="delete"></button>
+</div>
+
        {% endif %}
   </div>
 </article>
@@ -232,7 +329,7 @@ It is {% now "jS F Y H:i" %}
     </div>
 
       {% endfor %}
-
+</div>
 
 
   </div>
@@ -415,7 +512,7 @@ function divide() {
         if ($('#msg').length > 0) {
             $('#msg').remove();
         }
-    }, 3000)    // 3000 millisecond
+    }, 4000)    // 3000 millisecond
 </script>
   <script>
         document.addEventListener("DOMContentLoaded", function(event) {
@@ -446,6 +543,15 @@ function divide() {
     {% endfor %}
 {% endif %}
 </script>
+<script>
+  const fileInput = document.querySelector('#file-js-example input[type=file]');
+  fileInput.onchange = () => {
+    if (fileInput.files.length > 0) {
+      const fileName = document.querySelector('#file-js-example .file-name');
+      fileName.textContent = fileInput.files[0].name;
+    }
+  }
+</script>
      <script>
 //$(document).ready(function(){
 //setInterval(function(){
@@ -453,4 +559,51 @@ function divide() {
 //}, 3000);
 //});
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+  // Functions to open and close a modal
+  function openModal($el) {
+    $el.classList.add('is-active');
+  }
+
+  function closeModal($el) {
+    $el.classList.remove('is-active');
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  // Add a click event on buttons to open a specific modal
+  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener('click', () => {
+      openModal($target);
+    });
+  });
+
+  // Add a click event on various child elements to close the parent modal
+  (document.querySelectorAll('.modal-background, .modal-closed ,.modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
+
+    $close.addEventListener('click', () => {
+      closeModal($target);
+    });
+  });
+
+  // Add a keyboard event to close all modals
+  document.addEventListener('keydown', (event) => {
+    const e = event || window.event;
+
+    if (e.keyCode === 27) { // Escape key
+      closeAllModals();
+    }
+  });
+});
+</script>
+
 {% endblock %}

@@ -8,6 +8,8 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 
+from apps.topic.models import Topic
+
 
 class Category(models.Model):
     name = models.CharField(max_length=300)
@@ -20,10 +22,11 @@ class Category(models.Model):
 
 class Article(models.Model):
     title = models.CharField(max_length=300)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
+    description = models.CharField(max_length=300,blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
     titleimage = models.ImageField(upload_to='titleimages/',default="../static/img/default_article_title_image.png", blank=True)
     titleimagecaption = models.CharField(max_length=300,  blank=True, null=True)
-    category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name="category",max_length=300)
+    category = models.ForeignKey(Topic,on_delete=models.CASCADE,related_name="category",max_length=300)
     content = RichTextField(null=True, blank=True,
                             config_name="default", external_plugin_resources=[(
             'youtube', '/static/shareledge/ckeditor-plugins/youtube/youtube/', 'plugin.js',
@@ -41,3 +44,8 @@ class Article(models.Model):
 
     class Meta:
         ordering = ['-modified_at']
+
+class Like(models.Model):
+    Article = models.ForeignKey(Article, related_name='article_likes', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name='article_likes_created', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

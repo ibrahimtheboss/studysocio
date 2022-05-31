@@ -1,0 +1,137 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load embed_video_tags %}
+{% block upperscript%}
+(<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>)
+<link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <script src="https://kit.fontawesome.com/7dc3015a44.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<style>
+
+.is-shady {
+animation: flyintoright .4s backwards;
+background: #fff;
+box-shadow: rgba(0, 0, 0, .1) 0 1px 0;
+border-radius: 4px;
+display: inline-block;
+margin: 10px;
+position: relative;
+transition: all .2s ease-in-out;
+}
+.is-shady:hover {
+box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="columns">
+      <div class="column is-12 is-offset-one">
+          <h1 class="title">Your Lessons <sup>({{lessons_list.count}})</sup></h1>
+          <span><a href="{% url 'lessons_category' %}">Go back</a></span>
+
+
+          {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
+ <div class="container">
+      <div class="section">
+        <div id="app" class="row columns is-multiline  ">
+            {% for lessons in lessons_list %}
+
+
+
+          <div v-for="card in cardData" key="card.id" class="column is-3">
+            <div class="card large is-shady">
+              <div class="card-image">
+                  <b>{{lessons.category}}</b>
+ <span class="level-right">
+                       <form action="your_lessons/{{lessons.id}}/delete_lesson/" method="post">
+
+       {% csrf_token %}
+<a> <button type="submit" class="button is-danger is-small">Delete</button></a>
+        </form>  &nbsp;
+     <a href="your_lessons/{{lessons.id}}/edit_lesson/"> <button  class="button is-warning is-small">Edit</button></a>
+ </span>
+                <figure class="image is-16by9" style="margin-top:2%;">
+
+                    {% if lessons.image  %}
+                <img  src="{{ lessons.image.url }}"
+                      style=" max-width:640px; max-height:650px;" alt="Placeholder image"
+                      class="modal-button" data-target="modal-image2">
+                {% else %}
+                    {% video lessons.youtube_url as my_video %}
+                     <img  src="{{ my_video.thumbnail }}"
+                      style=" max-width:640px; max-height:650px;" alt="Placeholder image"
+                      class="modal-button" data-target="modal-image2">
+{% endvideo %}{% endif %}
+                </figure>
+
+              </div>
+
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-content">
+                    <p class="title is-4 no-padding">{{lessons.title}}</p>by:{{lessons.created_by.first_name}} {{lessons.created_by.last_name}}
+                    <p>
+                      <span class="title is-6">
+                           @ <a href="{% url 'studysocioprofile' lessons.created_by.username %}">
+                          {{lessons.created_by.username}} </a> ({{lessons.created_by.studysocioprofile.designation}})</span> </p>
+                    <p class="media-content">{{lessons.description|truncatechars:50 }}</p>
+                      <p class="media-content">Status: {{lessons.status}}</p>
+                  </div>
+                </div>
+                <div class="content">
+                  <i>Last Updated :{{lessons.modified_at|naturaltime}}</i>
+
+                  <a href="your_lessons/{{lessons.id}}/my_per_lesson/"> View ->  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+</div>
+
+{% endblock %}
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

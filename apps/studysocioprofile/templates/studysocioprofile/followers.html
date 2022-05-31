@@ -3,20 +3,54 @@
 {% block content %}
 <div class="container">
     <div class="columns">
-      <div class="column is-12">
+      <div class="column is-6">
           <h1 class="title">Followers - {{ user.username }}</h1>
 
           <p>Num: {{ user.studysocioprofile.followed_by.count }}</p>
       </div>
     </div>
-
-    <div class="columns">
-        <div class="column is-8">
-            {% if request.user == user %}
+    {% if request.user == user %}
             {% for ssuser in user.studysocioprofile.followed_by.all %}
-            <p><a href="{% url 'studysocioprofile' ssuser.user.username %}">{{ ssuser.user.username }}</a></p>
-            - <a href="{% url 'removefollow_ssuser' ssuser.user.username %}">Remove[X]</a>
-            {% empty %}
+<div class="column is-5">
+    <article class="media">
+  <figure class="media-left">
+    <p class="image is-64x64">
+        {% if ssuser.avatar %}
+       <img src="{{ ssuser.avatar.url }}" style=" width: 64px;
+    height: 64px;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 50%;
+        background-repeat: no-repeat;"  alt="Circle Image">{% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="field">
+      <p class="control">
+        <p class="" ><b>{{ ssuser.user.first_name }} {{ ssuser.user.last_name }}</b></p>
+        <p class="" ><a href="{% url 'studysocioprofile' ssuser.user.username %}">@ {{ ssuser.user.username }}</a></p>
+      </p>
+          <nav class="level-right">
+
+      <div class="level-right">
+
+            <a href="{% url 'removefollow_ssuser' ssuser.user.username %}">
+        <button class="button is-danger is-small is-rounded">
+          <span class="icon is-small">
+            <i class="delete"></i>
+          </span>
+          <span>Remove</span>
+        </button></a>
+
+      </div>
+    </nav>
+    </div>
+
+  </div>
+</article>
+</div>
+    <hr>
+{% empty %}
                 {% if request.user == user %}
                     <p>Sorry, you don't have any followers!</p>
                 {% else %}
@@ -25,9 +59,11 @@
             {% endfor %}
             {% endif %}
 
-        </div>
-    </div>
+
 </div>
+
+
+
 {% endblock %}
 
 

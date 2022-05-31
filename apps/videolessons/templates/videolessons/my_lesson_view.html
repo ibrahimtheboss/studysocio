@@ -1,0 +1,171 @@
+
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load embed_video_tags %}
+{% block upperscript%}
+<!--<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <script src="https://kit.fontawesome.com/7dc3015a44.js" crossorigin="anonymous"></script>-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <!-- Bulma Version 0.9.0-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+
+
+
+<style>
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container" id="lessoneapp">
+    <div class="columns">
+      <div class="column is-11 is-offset-one">
+          <span><a href="{% url 'your_lessons' request.user.username %}">Go back</a></span>
+          <h1 class="title">Watch Lesson</h1>
+          <nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'lessons_category' %}">Lesson Home </a></li>
+    <li><a href="{% url 'lessons' lessons.category.id %}">{{lessons.category.name}}</a></li>
+    <li class="is-active"><a href="#" aria-current="page">{{lessons.title}}</a></li>
+  </ul>
+</nav>
+
+ <section class="hero ">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-8 is-offset-2">
+              <h1 class="title" align="center">{{lessons.title}}</h1>
+            <figure class="image is-16by9">
+                {% video lessons.youtube_url as my_video %}
+                <iframe class="has-ratio" width="640" height="360"
+
+                        src="{{my_video.url}}" frameborder="0" allowfullscreen></iframe>
+                {% endvideo %}
+</figure>
+
+
+
+            </figure>
+          </div>
+        </div>
+
+          <div class="column is-8 is-offset-2">
+ <div class="media">
+                  <div class="media-right">
+                    <figure class="image is-48x48">
+                      {% if lessons.created_by.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ lessons.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+  border-radius: 50%; height:50px;width:65px;">
+
+                              {% endif %}
+                    </figure>
+                  </div>
+&nbsp;&nbsp;&nbsp;
+     <span class="media-content">
+                    <p class="title is-5 no-padding">by :&nbsp;{{lessons.created_by.first_name}} {{lessons.created_by.last_name}}
+                          <br> <small>@ <a href="{% url 'studysocioprofile' lessons.created_by.username %}">
+                          {{lessons.created_by.username}} </a> ({{lessons.created_by.studysocioprofile.designation}})</small>
+                    </p>
+         <span class="level-left" >
+         <a class="level-item">
+             <a @click="likeLesson({{ lessons.id }})" v-if="!liked_lesson.includes({{ lessons.id }})">
+                 <span class="icon is-small"><i class="fas fa-heart"></i></span></a>
+        </a>
+         <span v-if="liked_lesson.includes({{ lessons.id }})"><span class="icon is-small"><i class="fas fa-heart" style="color:red;"></i></span></span>
+          &nbsp;<span><small id="likes-{{ lessons.id }}">{{ lessons.lesson_likes.count }} likes</small> </span></span>
+                  </span>
+                </div>
+              </div>
+
+
+        <section class="section">
+          <div class="columns">
+            <div class="column is-8 is-offset-2">
+              <div class="content is-medium">
+
+                <h2 class="subtitle is-5">{{lessons.created_at}} <span class="level-right"><i>
+                    <small class="subtitle is-6"> Last Updated : {{lessons.modified_at|naturaltime}}</small></i></span></h2>
+                <p>{{lessons.Description}}</p>
+                  <br>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+ </section>
+
+    </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+ <script>
+  new Vue({
+    el: '#lessoneapp',
+    delimiters: ['[[',']]'],
+    data() {
+      return{
+        body: '',
+        poster: '{{ request.user.username }}',
+        created_at: 'Now',
+        liked_lesson:[{% for Likes in Likes %}{% if Likes.created_by == request.user %}{{ lessons.id }},{% endif %}{% endfor %}]
+      }
+
+    },
+    methods: {
+      likeLesson(lessons_id) {
+            this.liked_lesson.push(parseInt(lessons_id))
+
+            var lessons = {
+            'Lesson_id': lessons_id
+            };
+
+      fetch('/api/api_like_lesson/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(lessons)
+                    })
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+                    const el = document.getElementById('likes-' + lessons_id);
+                    const likes = parseInt(el.innerHTML.split(' ')[0]) + 1;
+                    el.innerHTML = likes + ' likes';
+                },
+    },
+
+
+  })
+</script>
+
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

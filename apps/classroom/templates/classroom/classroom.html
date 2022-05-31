@@ -1,0 +1,236 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% block upperscript %}
+ <title>Modal Cards - Free Bulma template</title>
+  <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.9.1/css/OverlayScrollbars.min.css'>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    Bulma Version 0.9.0
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bulma-modal-fx/dist/css/modal-fx.min.css" />-->
+    <style>
+    //.columns:nth-child(2)
+   // {margin-top: -10rem;}
+    </style>
+    <style>
+      html,body {
+  background: #EFF3F4;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+.hero-body .container {
+  max-width: 700px;
+}
+.hero-body .title {
+  color: hsl(192,17%,99%) !important;
+}
+.hero-body .subtitle {
+  color: hsl(192,17%,99%) !important;
+  padding-top: 2rem;
+  line-height: 1.5;
+}
+.features {
+  padding: 5rem 0;
+}
+.box.cta {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+}
+.card-image > .fa {
+  font-size: 8rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  color: #209cee;
+}
+.card-content .content {
+  font-size: 14px;
+  margin: 1rem 1rem;
+}
+.card-content .content h4 {
+  font-size: 16px;
+  font-weight: 700;
+}
+.card {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.18);
+  margin-bottom: 2rem;
+}
+.intro {
+  padding: 5rem 0;
+  text-align: center;
+}
+.sandbox {
+  padding: 5rem 0;
+}
+.tile.notification {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.is-shady {
+animation: flyintoright .4s backwards;
+background: #fff;
+box-shadow: rgba(0, 0, 0, .1) 0 1px 0;
+border-radius: 4px;
+display: inline-block;
+margin: 10px;
+position: relative;
+transition: all .2s ease-in-out;
+}
+.is-shady:hover {
+box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
+}
+/*adds font awesome stars*/
+footer li:before {
+  content: '\f1b2';
+  font-family: 'FontAwesome';
+  float: left;
+  margin-left: -1.5em;
+  color: #147efb;
+}
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="hero is-info is-small">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <br>
+          <p class="title">
+            Classroom
+          </p>
+            {% if request.user.studysocioprofile.designation == 'Teacher' %}
+            <span class="level-right"><a href="{% url 'create_classroom'%}">
+              <button class="button is-primary is-rounded is-small" >Create a Classroom </button></a></span>
+                {% else %}
+                <br>
+            {% endif %}
+        </div>
+      </div>
+    </section>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
+    <section class="container">
+      <div class="columns" >
+
+
+
+        <div class="column">
+{% for myclassroom in classrooms %}
+          {% if request.user == myclassroom.users %}
+          <div class="card is-shady" style="width:350px; height:300px;" >
+
+  <div class="card-image">
+              <figure class="image image is-2by1" >
+                  {% if myclassroom.classroom.classimage  %}
+                <img  src="{{ myclassroom.classroom.classimage.url }}"style=" max-width:640px; max-height:150px;" alt="Placeholder image" class="modal-button" data-target="modal-image2">
+                {% endif %}
+
+                  {% if request.user.studysocioprofile.designation == 'Teacher' %}
+
+                  {% if myclassroom.classroom.created_by == request.user.studysocioprofile.user %}
+        <form action="{{myclassroom.classroom.id}}/delete_classroom/" method="post">
+
+       {% csrf_token %}
+            <button type="submit" class="tag is-danger" style="position:absolute; top: 5%;left: 80%;">Delete</button>
+        </form>
+
+           <a href = "{{myclassroom.classroom.id}}/edit_classroom" >
+
+
+               <button type="submit" class="tag is-warning" style="position:absolute; top: 5%;left: 63%;">Edit</button></a>
+            {% endif %}
+                  {% elif request.user.studysocioprofile.designation == 'Student' %}
+                  <form action="{{myclassroom.classroom.id}}/leave_classroom/" method="post">
+
+       {% csrf_token %}
+            <button type="submit" class="tag is-danger" style="position:absolute; top: 5%;left: 80%;">Leave</button>
+        </form>
+                  {% endif %}
+                  <figcaption class="has-text-white-bis"
+     style="position:absolute; top: 50%;left: 50%;
+     transform: translate(-50%, -50%);background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));">
+                <p style="font-size: 30px;">&nbsp;<b>{{ myclassroom.classroom.name }}</b>&nbsp;</p>
+
+              </figcaption>
+              </figure>
+
+            </div>
+
+            <div class="card-content">
+
+              <article class="media">
+  <div class="media-content">
+      <span >by: {{myclassroom.classroom.created_by}}</span>
+ <p class="is-flex-wrap-wrap">
+        <b>Description:</b>
+ </p>
+
+    <p>{{ myclassroom.classroom.Description|truncatechars:25 }}</p>
+      <i class="level-right">{{myclassroom.classroom.modified_at|naturaltime}}</i>
+  </div>
+
+<a href="{% url 'classroom_activity' myclassroom.classroom.id %}">
+    <button class="button is-small is-info">View Classroom</button></a>
+</article>
+
+            </div>
+          </div>
+    {% endif %}
+
+{% empty %}
+        </div>
+
+<div class="box cta">
+ {% if request.user.studysocioprofile.designation == 'Teacher' %}
+<div class="level-item has-text-centered">
+  <p class="title is-4">You Have no classrooms!</p>
+</div>
+  {% endif %}
+  {% if request.user.studysocioprofile.designation == 'Student' %}
+<div class="level-item has-text-centered">
+  <p class="title is-4">You Have not been enrolled to a classroom !</p>
+  </div>
+  {% endif %}
+ </div>
+
+
+{% endfor %}
+      </div>
+
+    </section>
+
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

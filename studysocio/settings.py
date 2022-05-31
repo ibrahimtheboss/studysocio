@@ -46,8 +46,14 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'ckeditor',
     'django_select2',
-    'emoji_picker',
-  'emoticons',
+    'django_extensions',
+    'colorful',
+    'crispy_forms',
+    "crispy_bulma",
+    'datetimepicker',
+    'flatpickr',
+    'embed_video',
+'emoji_picker',
 
 
 
@@ -60,8 +66,16 @@ INSTALLED_APPS = [
     'apps.article',
     'apps.classroom',
     'apps.announcement',
+    'apps.videolessons',
+    'apps.topic',
+    'apps.complaint',
+
 
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
+
+CRISPY_TEMPLATE_PACK = "bulma"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,6 +88,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'studysocio.urls'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+"""EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('studysocioteam@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('Qazxcvbnm123')"""
+
 
 TEMPLATES = [
     {
@@ -94,6 +118,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'studysocio.wsgi.application'
 
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -111,6 +136,9 @@ DATABASES = {
         'PORT': '3306',
         'USER': 'root',
         'PASSWORD': 'user',
+'OPTIONS': {
+ 'charset': 'utf8mb4'
+},
     }
 }
 
@@ -147,6 +175,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
@@ -154,6 +183,8 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

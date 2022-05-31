@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 # Create your models here.
 class Notification(models.Model):
     MESSAGE = 'message'
@@ -8,14 +9,17 @@ class Notification(models.Model):
     LIKE = 'like'
     MENTION = 'mention'
     REPLY = 'reply'
-
+    LIKE_ARTICLE = 'like_article'
+    LIKE_LESSON = 'like_lesson'
 
     CHOICES = (
         (MESSAGE, 'Message'),
         (FOLLOWER, 'Follower'),
         (LIKE, 'like'),
         (MENTION, 'Mention'),
-        (REPLY, 'Reply')
+        (REPLY, 'Reply'),
+        (LIKE_ARTICLE, 'like_article'),
+        (LIKE_LESSON, 'like_lesson'),
     )
 
     to_user = models.ForeignKey(User, related_name='notification', on_delete=models.CASCADE)

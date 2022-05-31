@@ -54,51 +54,73 @@
               {% if postfeed %}
           <hr>
                 <strong>Related Posts</strong>
-                <div class="wrapper-ssuser">
-                    {% for postfeed in postfeed %}
+                {% for postfeed in postfeed %}
+      <div class="columns body-columns">
 
-                    <div class="col-lg-4 mb-4">
-                <div class="card">
-                    <p class="card-title"><a href="{% url 'studysocioprofile' postfeed.created_by.username %}"> <strong>@ {{ postfeed.created_by.username }}</strong> </a>
-                        <small>{{ postfeed.created_at|naturaltime }}</small>
+        <div class="column is-half is-offset-one-quarter">
+            <div class="card" >
+                <div class="card-content">
 
-                    </p>
 
-                  <div class="card-body">
-                    <h5 class="card-title">
-                                  </h5>
+                    <div class="content">
+                        <article class="media" >
 
-             <article class="media">
-                    <br>
-                      <figure class="media-left">
-                          <p class="image is-64x64">
-                              {% if postfeed.created_by.studysocioprofile.avatar %}
-                <img src="{{ postfeed.created_by.studysocioprofile.avatar.url }}">
+  <div class="media-content" >
+
+<div class="content">
+  <div class="content" >
+                 &nbsp; &nbsp; &nbsp; &nbsp; {% if postfeed.topic %} <span class="card"{% if postfeed.topic %} style="background-color: {{postfeed.topic.colour}};"{% endif %}> &nbsp; &nbsp;  {{postfeed.topic}}&nbsp; &nbsp;</span>{% endif %}
+          <span>
+          <i class="media-left">
+    <p class="image is-64x64"style="float: left;">
+      {% if postfeed.created_by.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ postfeed.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+  border-radius: 50%; height:65px;width:90px;">
+
                               {% endif %}
-                          </p>
-                      </figure>
-                      <div class="media-content">
-                          <div class="content">
-                              <p>
+    </p>
 
-                                  <br>
-                                  {{ postfeed.body }}
-                                  <br>
-                                  {% if postfeed.feedimage %}
+  </i> </span>
+
+          <p class="level-left" > <strong style="font-size:20px;">&nbsp;  <b>{{postfeed.created_by.first_name}} {{postfeed.created_by.last_name}}</b> </strong><span><strong>&nbsp;&nbsp;@ <a href="{% url 'studysocioprofile' postfeed.created_by.username %}">{{ postfeed.created_by.username }}</a></strong></span>
+              <small>&nbsp; posted <i>{{ postfeed.created_at|naturaltime }}</i></small> </p>
+
+
+
+  </div>
+</div>
+<br>
+
+    <div class="content">
+      <p>
+          {{ postfeed.body|linebreaks|urlizetrunc:15 }}
+      </p>
+        {% if postfeed.feedimage %}
+
+        <div class="card-image">
+
+                    <figure class="image is-3by2">
                                     <img src="{{ postfeed.feedimage.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
-                                  {% endif %}
+                    </figure>
+                </div>
+        {% endif %}
 
-                              </p>
-                          </div>
+    </div>
+    <nav class="level is-mobile">
+      <div class="level-right">
+        <a class="level-item">
+          <span class="icon is-small"><i class="fas fa-heart"></i></span>
+        </a>
+        &nbsp;{{ postfeed.likes.count }} likes
+      </div>
+    </nav>
+  </div>
 
-                      </div>
-                  </article>
-                  </div>
-                 </div>
+</article>
+                    </div>
                 </div>
 
-                    {% endfor %}
-             {% endif %}
+            </div>
 
 
 
@@ -106,7 +128,15 @@
 
 
 
-                </div>
+
+
+
+
+        </div>
+    </div>
+
+      {% endfor %}
+          {% endif %}
       </div>
               </div>
 

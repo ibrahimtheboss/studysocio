@@ -1,11 +1,132 @@
 {% extends 'core/base.html' %}
 
+{% block upperscript %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <style>
+    @media(max-width: 500px) {
+      .reverse-columns {
+        flex-direction: column-reverse;
+        display: flex;
+      }
+    }
+
+    .titled {
+      font-family: 'Merriweather', serif !important;
+      font-size: 58px !important;
+      font-weight: 400 !important;
+      line-height: 64px !important;
+    }
+
+    .subtitled {
+      font-family: 'Merriweather', serif !important;
+      font-size: 22px !important;
+      font-weight: 400 !important;
+      line-height: 36px !important;
+    }
+    #colored-dna-back {
+      background: url(../images/colored-dna.svg);
+      background-position: center;
+      background-size: cover;
+      background-color: #212931;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <div class="columns">
-            <div class="column is-12">
-                <h1 class="title">Welcome to Study-Socio @ {{request.user.username}}</h1>
-            </div>
+{% if request.user.is_authenticated %}
+ <section class="hero is-medium has-text-centered">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns is-centered">
+          <div data-aos="zoom-in-up" class="column is-8">
+            <h1 class="title is-3 ">
+              Welcome @ {{request.user.username}}
+            </h1>
+          </div>
         </div>
+
+      </div>
     </div>
+  </section>
+{% endif %}
+<section class="hero is-white is-fullheight has-background-info-light">
+
+    <div class="hero-body">
+
+      <div class="container">
+        <div class="columns  is-vcentered reverse-columns">
+          <div data-aos="fade-right" class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-5-desktop is-offset-1-desktop
+          is-5-widescreen is-offset-1-widescreen
+          is-5-fullhd is-offset-1-fullhd">
+           <h1 class="title titled is-1 mb-6">
+              Study-Socio <span id="typewriter"></span>
+            </h1>
+            <h2 class="subtitle subtitled">
+              A place for an educational Social network community for meant students and teachers form various fields teach, create, share useful better knowledge.
+            </h2>
+          </div>
+          <div data-aos="fade-down" class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-4-desktop is-offset-1-desktop
+          is-4-widescreen is-offset-1-widescreen
+          is-4-fullhd is-offset-1-fullhd" data-aos="fade-up">
+            <figure class="image is-square">
+              <img src="/static/logo/logo-1.png">
+            </figure>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+ <footer class="section">
+      <div class="container">
+        <div class="pb-5 is-flex is-flex-wrap-wrap is-justify-content-between is-align-items-center">
+          <div class="mr-auto mb-2">
+            <a class="is-inline-block" href="#">
+              <img class="image" src="/static/logo/logo.png" alt="" width="196px"></a>
+          </div>
+          <div>
+            <ul class="is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-center">
+              <li class="mr-4"><a class="button is-white" href="#">About</a></li>
+              <li class="mr-4"><a class="button is-white" href="#">Help?</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="pt-5" style="border-top: 1px solid #dee2e6;"></div>
+      <div class="container">
+        <div class="is-flex-tablet is-justify-content-between is-align-items-center">
+          <p>All rights reserved © Study Socio {% now 'Y' %} Created by Ibrahim Hakam</p>
+
+        </div>
+      </div>
+    </footer>
+
+
+{% endblock %}
+{% block script %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/TypewriterJS/2.13.1/core.min.js"></script>
+  <script>
+    new Typewriter('#typewriter', {
+      strings: ['A Place of Collaboration ', 'Students', 'Teachers', 'From various fields','Exiting Articles',
+       'Educational Lessons '],
+      autoStart: true,
+      loop: true,
+    });
+  </script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      once: true
+    });
+  </script>
 {% endblock %}

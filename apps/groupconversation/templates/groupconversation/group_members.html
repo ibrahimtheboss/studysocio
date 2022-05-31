@@ -4,16 +4,45 @@
 <div class="container">
     <div class="columns">
       <div class="column is-12">
-          <h1 class="title">Conversations</h1>
+          <span><a href="{% url 'groupconversation' obj.id %}">Go back</a></span>
+          <h1 class="title">Members List </h1>
 
           <div class="conversations-list">
               {% for members in groupconversationmembers %}
-                <div class="conversations-list-item">
-                    {% if members.users == members.groupconversation.created_by %}
+               {% if members.users == members.groupconversation.created_by %}
                         <p> Admin is  {{ members.groupconversation.created_by }} </p>
                     {% endif %}
+              <br>
+              <article class="media">
+  <figure class="media-left">
+    <p class="image is-64x64">
+      {% if members.users.studysocioprofile.avatar %}
+      <img style=" vertical-align: middle;
+  border-radius: 50%; height:65px;width:90px;" src="{{ members.users.studysocioprofile.avatar.url }}">
+        {% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="content">
+
 
                     <p>{{ members.users.username }} - {{ members.added_at|naturaltime }}</p>
+    </div>
+
+  </div>
+  <div class="media-right">
+       {% if members.users == request.user.studysocioprofile.user %}
+        <form action="listofgroupmembers/{{members.id}}/remove/" method="post">
+
+       {% csrf_token %}
+         <button type="submit" class="button is-danger is-rounded is-small" >leave</button>
+        </form>
+       {% endif %}
+  </div>
+</article>
+              <br>
+                <div class="conversations-list-item">
+
 
 
 

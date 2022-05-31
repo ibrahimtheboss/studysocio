@@ -7,6 +7,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
+from numpy import argmax
+
 from .forms import PostFeedForm
 
 # Create your views here.
@@ -17,34 +19,17 @@ from .forms import PostFeedForm
 from .models import PostFeed, ReplyFeed
 from ..notification.utilities import create_notification
 from ..studysocioprofile.models import StudySocioProfile
-import tensorflow as tf
-from tensorflow import keras
-import numpy as np
-from numpy import argmax
-import PIL
-from PIL import Image
+from ..core.m_l_model import imagepredict
+from ..topic.models import Topic
+from better_profanity import profanity
+
+if __name__ == "__main__":
+    profanity.load_censor_words()
 
 
-def imagepredict(path):
-    imd = []
-    image = Image.open(path)
-    image = image.resize((256, 256))
-    image = image.convert(mode='L')
-    # image = tf.keras.preprocessing.image.load_img(path, color_mode='grayscale',
-    # target_size=(256, 256))
-    image = np.array(image)
-    imd.append(image)
-    d = np.array(imd)
-    d = d.reshape((d.shape[0], 256, 256, 1))
-    d = d.astype('float')
-    d = d / 255.0
-    d.flatten()
-    model = keras.models.load_model('static/model/model.h5')
-    y = model.predict(d)
-    imd.pop()
-    print(imd)
-    return y
-
+"""lines = []
+with open('static/words/bad_words_all.txt') as f:
+    lines = f.readlines()"""
 
 @login_required
 def feed(request):
@@ -57,9 +42,11 @@ def feed(request):
         ssuser = PostFeed.objects.filter(created_by_id__in=userids)
         for k in ssuser:
             replypost = ReplyFeed.objects.all()
+        form = PostFeedForm(request.POST)
         context = {
             'ssuser': ssuser,
             'replypost': replypost,
+            'form':form,
         }
 
         for postfeed in ssuser:
@@ -76,12 +63,18 @@ def feed(request):
                 body = request.POST['body']
             else:
                 body = ''
+            if 'topic' in request.POST :
+                topic = request.POST['topic']
+            else:
+                topic = ''
             if 'feedimage' in request.FILES is not None:
                 feedimage = request.FILES['feedimage']
             else:
                 feedimage = ''
-
-            postfeed = PostFeed(body=body, feedimage=feedimage, created_by=User.objects.get(pk=request.user.id))
+            if topic == "":
+                postfeed = PostFeed( body=body, feedimage=feedimage,created_by=User.objects.get(pk=request.user.id))
+            else:
+                postfeed = PostFeed(topic=Topic.objects.get(pk=topic), body=body, feedimage=feedimage,created_by=User.objects.get(pk=request.user.id))
 
             if postfeed.body != "" and postfeed.feedimage !="":
                 print(postfeed.feedimage)
@@ -94,11 +87,12 @@ def feed(request):
 
                 else:
                     print("good image")
-                    if postfeed.body == 'go':
-                        postfeed.body = 'GO TO BED'
+
+                    cleaned_text = profanity.censor(postfeed.body)
+                    postfeed.body = cleaned_text
+
                     postfeed.save()
                     results = re.findall("(^|[^@\w])@(\w{1,20})", body)
-
                     for result in results:
                         result = result[1]
 
@@ -126,11 +120,10 @@ def feed(request):
 
             elif postfeed.body != "" and postfeed.feedimage is not None:
 
-                if postfeed.body == 'go':
-                    postfeed.body = 'GO TO BED'
+                cleaned_text = profanity.censor(postfeed.body)
+                postfeed.body = cleaned_text
                 postfeed.save()
                 results = re.findall("(^|[^@\w])@(\w{1,20})", body)
-
                 for result in results:
                     result = result[1]
 
@@ -168,6 +161,7 @@ def deletefeed(request, id):
         if request.user.studysocioprofile.user == postfeed.created_by:
             postfeed.delete()
             # redirect to the feed page
+            messages.success(request, 'Successfully Deleted!!')
             return redirect('feed')
 
         # no need for an `else` here. If it's a GET request, just continue
@@ -196,11 +190,29 @@ def replypost(request):
             if user != request.user:
                 create_notification(request, user, 'reply')
             # redirect to the feed page
-            return redirect('feed')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         # no need for an `else` here. If it's a GET request, just continue
 
     return render(request, 'feed/feed.html')
+
+@login_required
+def deletereplyfeed(request, id):
+    replyfeed = ReplyFeed.objects.get(id=id)  # we need this for both GET and POST
+
+    if request.method == 'POST':
+        # delete the feed from the database
+        if request.user.studysocioprofile.user == replyfeed.created_by:
+            replyfeed.delete()
+            # redirect to the feed page
+            messages.success(request, 'Successfully Deleted Reply!!')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+        # no need for an `else` here. If it's a GET request, just continue
+
+    return render(request, 'feed/feed.html', {'replyfeed': replyfeed})
+
+
 
 
 @login_required
@@ -238,3 +250,5 @@ def search(request):
     }
 
     return render(request, 'feed/search.html', context)
+
+

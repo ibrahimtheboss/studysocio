@@ -1,0 +1,139 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% load embed_video_tags %}
+{% load humanize %}
+
+{% block upperscript%}
+(<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>)
+<link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <script src="https://kit.fontawesome.com/7dc3015a44.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<style>
+
+.is-shady {
+animation: flyintoright .4s backwards;
+background: #fff;
+box-shadow: rgba(0, 0, 0, .1) 0 1px 0;
+border-radius: 4px;
+display: inline-block;
+margin: 10px;
+position: relative;
+transition: all .2s ease-in-out;
+}
+.is-shady:hover {
+box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="columns">
+      <div class="column is-12 is-offset-one">
+           <span><a href="{% url 'studysocioprofile' user.username %}">Go back</a></span>
+          <h1 class="title">Lessons by {{ user.username }} <sup>{{lessons_list.count}}</sup></h1>
+
+ <div class="container">
+      <div class="section">
+        <div id="app" class="row columns is-multiline  ">
+            {% for lessons in page_obj.object_list %}
+            <div class="column is-one-quarter is-shady">
+  <div class="pricing-plan is-warning">
+<div class="title is-5">{{lessons.title}}</div>
+         <div class="card-image">
+                <figure class="image is-16by9">
+                                  {% video lessons.youtube_url as my_video %}
+                <img  src=" {{my_video.thumbnail}}"
+                      style=" max-width:640px; max-height:650px;" alt="Placeholder image"
+                      class="modal-button" data-target="modal-image2">
+                    {% endvideo %}
+                </figure>
+              </div>
+    <div class="content">
+      <div class="plan-item" data-feature="Storage">{{lessons.Description|truncatechars:120}}</div>
+      <div class="plan-item" data-feature="Domains">Category:
+          </div>
+    </div>
+      <div class="columns is-mobile is-gapless">
+          <div class="column">
+
+              </div>
+          <div class="column is-four-fifths">
+       <p class="level-left">
+
+                         <b> {{lessons.category.name}}</b>
+              </div>
+          </div>
+      <div class="level-right">
+         <p><i>{{lessons.modified_at|naturaltime}}</i></p>
+      </div>
+    <div class="plan-footer">
+      <a href="{% url 'per_lesson' lessons.category.id  lessons.id %}"> <button class="button is-fullwidth">view >></button></a>
+    </div>
+  </div>
+        </div>
+             {% empty %}
+          <p>No Lessons created</p>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+
+      </div>
+    </div>
+</div>
+<div class="column is-4
+is-offset-4 is-centered" >
+    <nav class="pagination is-centered is-small" role="navigation" aria-label="pagination">
+        {% if page_obj.has_previous %}
+
+        <a href="?page={{ page_obj.previous_page_number }}" class="pagination-previous">« Previous page</a>
+        <ul class="pagination-list ">
+            {% if page_obj.number > 3 %}
+            <a href="?page=1" class="pagination-link">1</a>
+            {% if page_obj.number > 4 %}
+            <span>...</span>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+        </ul>
+        <ul class="pagination-list ">
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <a href="?page={{ num }}" class="pagination-link">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}"class="pagination-link">{{ num }}</a>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        <ul class="pagination-list ">
+            {% if page_obj.has_next %}
+            {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+            <span>...</span>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">{{ page_obj.paginator.num_pages }}</a>
+            {% elif page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">{{ page_obj.paginator.num_pages }}</a>
+            {% endif %}
+        </ul>
+        <a href="?page={{ page_obj.next_page_number }}" class="pagination-next">Next Page »</a>
+
+        {% endif %}
+    </nav>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

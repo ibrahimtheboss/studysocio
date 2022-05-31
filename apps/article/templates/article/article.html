@@ -1,5 +1,5 @@
 {% extends 'core/base.html'  %}
-
+{% load crispy_forms_tags %}
 
 
 {% block upperscript%}
@@ -11,8 +11,11 @@
 
 <div class="container">
     <div class="columns">
-      <div class="column is-12">
+      <div class="column is-11 is-offset-one">
           <h1 class="title">Create Article</h1>
+          <p><a href="{% url 'your_articles' request.user.username %}">
+               <button class="button is-info"><< Back to Your Articles </button></a></p>
+          <br>
            {% if user.studysocioprofile.avatar %}
             <figure class="image is-128x128">
                 <img src="{{ user.studysocioprofile.avatar.url }}">
@@ -22,46 +25,79 @@
           <h3 class="bold">Article Created by {{ user.username }}</h3>
           <hr>
           <h3 class="bold">Designation :  {{ user.studysocioprofile.designation }}</h3>
-          <h3 class="bold">Profile Status :  {{ user.studysocioprofile.profilestatus }}</h3>
-          <h3 class="bold">Profile Status :  {{ user.studysocioprofile.gender }}</h3>
           <hr>
+             {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
 {{ form.media.css }}
     <style>
         input, select {width: 20%}
     </style>
+          <br>
           <form method="post" enctype="multipart/form-data" >
               {% csrf_token %}
               {{ form.media}}
-
-              <div class="form-group">
-                  <label><font class="label" > Title :</font></label>
-                  {{ form.title}}
-              </div>
-              <div class="form-group">
-                  <label><font class="label" > Title Image :</font></label>
-                  {{ form.titleimage}}
-              </div>
-              <div class="form-group">
-                  <label><font class="label" > Image caption (title):</font></label>
-                  {{ form.titleimagecaption}}
-              </div>
-              <div class="form-group">
-                  <label><font class="label" > Category:</font></label>
-                  {{ form.category}}
+               <div class="field">
+                  <div class="control">
+                      <div class="level-right">
+                      <button class="button is-success">Save Changes</button>
+                          </div>
+                  </div>
               </div>
               <br>
               <div class="form-group">
-                  <label><font class="label" > Content:</font></label>
+                  <div class="level-right">
+                  <label><font class="label" > Status :&nbsp; </font></label>
+                  {{ form.status}}
+                      </div>
+              </div>
+                <br>
+              <div class="form-group">
+                  <label><font class="label" > Title : </font></label>
+                  {{ form.title}}
+              </div>
+              <br>
+              <div class="form-group">
+                  <label><font class="label" > Description : (small description) </font></label>
+                  {{ form.description}}
+              </div>
+              <br>
+              <div class="form-group">
+                  <label><font class="label" > Title Image : </font></label>
+                  {{ form.titleimage}}
+              </div>
+              <br>
+              <div class="form-group">
+                  <label><font class="label" > Image caption (title): </font></label>
+                  {{ form.titleimagecaption}}
+              </div>
+              <br>
+              <div class="form-group">
+                  <label><font class="label" > Category: </font></label>
+                  {{ form.category}}
+              </div>
+
+              <br>
+              <div class="form-group">
+                  <label><font class="label" > Content: </font></label>
                   <br>
                   {{ form.content}}
               </div>
 
                 <hr>
-              <div class="field">
-                  <div class="control">
-                      <button class="button is-success">Save Changes</button>
-                  </div>
-              </div>
           </form>
 
       </div>
@@ -69,4 +105,18 @@
 
 </div>
 
+{% endblock %}
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
 {% endblock %}

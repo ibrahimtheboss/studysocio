@@ -29,8 +29,13 @@ def notifications(request):
             return redirect('studysocioprofile', username=notification.created_by.username)
         elif notification.notification_type == Notification.REPLY:
             return redirect('feed')
+        elif notification.notification_type == Notification.LIKE_ARTICLE:
+            return redirect('studysocioprofile', username=notification.created_by.username)
+        elif notification.notification_type == Notification.LIKE_LESSON:
+            return redirect('your_lessons', username=notification.created_by.username)
     return render(request, 'notification/notifications.html')
 
+@login_required
 def notificationsclear(request):
     notification = Notification.objects.filter(to_user_id=request.user.id)
     if request.method == 'POST':

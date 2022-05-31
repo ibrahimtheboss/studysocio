@@ -1,0 +1,334 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% block upperscript %}
+ <title>Results</title>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.js"></script>
+
+    <style>
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+{% if request.user.studysocioprofile.designation == 'Student' %}
+<section class="hero is-info is-small">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <br>
+          <p class="title">
+            Assignment Submitted Detail
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
+    <section class="container">
+      <div class="columns" >
+
+       <div class="table-container">
+            <table class="table">
+<br>
+            {% for assignemnt_details in ass_detail %}
+            for Assignment of {{assignemnt_details.name}}
+<table class="scrollTable" id="table_id" class="display">
+    <thead>
+        <tr>
+            <th>Assignment Description</th>
+            <th>Assignment materials</th>
+            <th>submitted_on_time</th>
+            <th>Submitted_at</th>
+            <th>modified_at</th>
+            <th>Submitted_by</th>
+            <th>------</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for myassignment in submit_assignments_by_student %}
+    {% if myassignment.assignment.id == assignemnt_details.id %}
+        <tr>{{myassignment.assignment.due_date}}
+            <td><p> {{myassignment.description}} </p></td>
+            <td><p> {% if myassignment.materials %}<a href="{{myassignment.materials.url}}">View</a> {% endif %} </p></td>
+            <td><p> {% if myassignment.submitted_on_time == True %}Submitted on time{% else %}submitted Late{% endif %}</p></td>
+            <td><p> {{myassignment.created_at}} </p></td>
+            <td><p> {{myassignment.modified_at}} </p></td>
+            <td><p> {{myassignment.created_by.first_name}} - {{myassignment.created_by.last_name}} @ {{myassignment.created_by.username}} </p></td>
+            <td>{% if myassignment.assignment.status == "Available" %}<p><a href="{{myassignment.id}}/edit_submit_assignment">
+       <button type="submit" class="button is-warning is-small">Edit</button></a></p>{% else %} Cannot Edit {% endif %}</td>
+        </tr>
+    {% endif %}
+       {% empty %}
+          <tr>
+            <p>Not Submitted</p>
+        </tr>
+
+{% endfor %}
+    </tbody>
+</table>
+            </table>
+        </div>
+      </div>
+    </section>
+<br>
+<section class="hero is-primary is-small">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <br>
+          <p class="title">
+            Assignment Results
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="columns" >
+
+        <div class="table-container">
+            <table class="table">
+<br>
+<table   id="table_id2" class="display">
+    <thead>
+        <tr>
+            <th>user</th>
+            <th>feedback</th>
+            <th>marks</th>
+            <th>Released On</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for mygrade in grades_assignments_by_student %}
+    {% if mygrade.assignment.id == assignemnt_details.id %}
+        <tr>
+            <td><p> {{mygrade.user.first_name}}- {{mygrade.user.last_name}} @ {{mygrade.user.username}} </p></td>
+            <td><p> {{mygrade.feedback}} </p></td>
+            <td><p> {{mygrade.marks}} </p></td>
+            <td><p> {{mygrade.modified_at}} </p></td>
+        </tr>
+    {% endif %}
+       {% empty %}
+          <tr>
+            <p>Not Submitted</p>
+        </tr>
+
+{% endfor %}
+    </tbody>
+</table>
+
+            </table>
+            {% endfor%}
+
+        </div>
+      </div>
+    </section>
+{% endif %}
+
+
+
+
+
+
+{% if request.user.studysocioprofile.designation == 'Teacher' %}
+<section class="hero is-info is-small">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <br>
+          <p class="title">
+            Assignment Submitted Detail
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
+    <section class="container">
+      <div class="columns" >
+
+       <div class="table-container">
+            <table class="table">
+<br>
+            {% for assignemnt_details in ass_detail %}
+            for Assignment of {{assignemnt_details.name}}
+<table class="scrollTable" id="table_id3" class="display">
+    <thead>
+        <tr>
+            <th>Assignment Description</th>
+            <th>Assignment materials</th>
+            <th>submitted_on_time</th>
+            <th>Submitted_at</th>
+            <th>modified_at</th>
+            <th>Submitted_by</th>
+            <th>------</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for myassignment in submit_assignments_for_teacher %}
+    {% if myassignment.assignment.id == assignemnt_details.id %}
+        <tr>{{myassignment.assignment.due_date}}
+            <td><p> {{myassignment.description}} </p></td>
+            <td><p> {% if myassignment.materials %}<a href="{{myassignment.materials.url}}">View</a> {% endif %} </p></td>
+            <td><p> {% if myassignment.submitted_on_time == True %}Submitted on time{% else %}submitted Late{% endif %}</p></td>
+            <td><p> {{myassignment.created_at}} </p></td>
+            <td><p> {{myassignment.modified_at}} </p></td>
+            <td><p> {{myassignment.created_by.first_name}} - {{myassignment.created_by.last_name}} @ {{myassignment.created_by.username}} </p></td>
+            <td>----</td>
+        </tr>
+    {% endif %}
+       {% empty %}
+          <tr>
+            <p>Not Submitted</p>
+        </tr>
+
+{% endfor %}
+    </tbody>
+</table>
+            </table>
+        </div>
+      </div>
+    </section>
+<br>
+<section class="hero is-primary is-small">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <br>
+          <p class="title">
+            Assignment Results
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="columns" >
+
+        <div class="table-container">
+            <table class="table">
+<br>
+<table   id="table_id4" class="display">
+    <thead>
+        <tr>
+            <th>user</th>
+            <th>feedback</th>
+            <th>marks</th>
+            <th>Released On</th>
+            <th>-------</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    {% for mygrade in grades_assignments_for_teacher %}
+    {% if mygrade.assignment.id == assignemnt_details.id %}
+        <tr>
+            <td><p> {{mygrade.user.first_name}}- {{mygrade.user.last_name}} @ {{mygrade.user.username}} </p></td>
+            <td><p> {{mygrade.feedback}} </p></td>
+            <td><p> {{mygrade.marks}} </p></td>
+            <td><p> {{mygrade.modified_at}} </p></td>
+            <td>{% if mygrade.created_by == request.user %}<p><a href="{{mygrade.id}}/edit_assignment_grades">
+       <button type="submit" class="button is-warning is-small">Edit</button></a></p>{% else %} Cannot Edit {% endif %}</td>
+        </tr>
+    {% endif %}
+       {% empty %}
+          <tr>
+            <p>Not Submitted</p>
+        </tr>
+
+{% endfor %}
+    </tbody>
+</table>
+
+            </table>
+            {% endfor%}
+
+        </div>
+      </div>
+    </section>
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+<script>
+    $(document).ready( function () {
+    $('#table_id').DataTable();
+} );
+    $(document).ready( function () {
+    $('#table_id2').DataTable();
+} );
+    $(document).ready( function () {
+    $('#table_id3').DataTable();
+} );
+
+    $(document).ready( function () {
+    $('#table_id4').DataTable();
+} );
+</script>
+<script>
+    <script type="text/javascript">
+$(function(){
+
+$('.scrollTable').scrolltable({
+stripe: true,
+oddClass: 'odd',
+setWidths: true,
+maxHeight: 300
+});
+
+});
+</script>
+</script>
+{% endblock %}

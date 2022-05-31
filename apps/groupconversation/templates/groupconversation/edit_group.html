@@ -1,0 +1,43 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="columns">
+      <div class="column is-6">
+          <span><a href="{{request.META.HTTP_REFERER}}">Go back</a></span>
+          <h1 class="title">Edit {{obj.name}}</h1>
+          <div>
+           {% if obj.groupimage %}
+              <article class="media">
+            <figure class="media">
+                <p class="image is-128x128">
+                <img src="{{ obj.groupimage.url }}">
+                </p>
+            </figure>
+           {% endif %}
+                  </article>
+              </div>
+
+          <br> <br><br>
+          <p class="bold">Group Created by {{ obj.created_by }}</p>
+
+          <hr>
+
+          <form method="post" enctype="multipart/form-data" >
+              {% csrf_token %}
+               <div class="field">
+                   <div class="control">
+                  {{ form|crispy }}
+              </div>
+</div>
+                <hr>
+              <div class="field">
+                  <div class="control">
+                      <button type="submit" class="button is-success">Save Changes</button>
+                  </div>
+              </div>
+          </form>
+      </div>
+    </div>
+</div>
+{% endblock %}

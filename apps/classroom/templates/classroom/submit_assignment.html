@@ -1,0 +1,62 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="columns">
+      <div class="column is-6">
+          <span><a href="{{request.META.HTTP_REFERER}}">Go back</a></span>
+          <h1 class="title">Submit Assignment</h1>
+          <div>
+              </div>
+
+          <br> 
+
+          <hr>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+          <form method="post" enctype="multipart/form-data" >
+              {% csrf_token %}
+               <div class="field">
+                   <div class="control">
+                  {{ form|crispy }}
+              </div>
+</div>
+                <hr>
+              <div class="field">
+                  <div class="control">
+                      <button type="submit" class="button is-success">Save Changes</button>
+                  </div>
+              </div>
+          </form>
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

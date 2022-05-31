@@ -1,18 +1,79 @@
 {% extends 'core/base.html' %}
-
+{% load crispy_forms_tags %}
+{% block upperscript %}
+<title> Login - Study Scoio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+{% endblock %}
 {% block content %}
-    <div class="'container">
-        <div class="columns">
-             <div class="column is-12">
-                <h1 class=" title">Login</h1>
-                 <form method="post" action=".">
-                     {% csrf_token %}
-                     {{ form.as_p}}
-                     <button class="button is-success" type="submit">Login</button>
-                 </form>
+<br>
 
+<div class="hero-body is-fullheight has-background-success-light">
+    <div class="column is-half is-offset-one-quarter">
+      <div class="hero-body has-text-centered">
+        <div class="login">
+          <img src="/static/logo/logo.png" alt="" width="356px" />
+            <br>
+            <p class="title"><b>Login</b></p>
+             <form method="post" action=".">
+                     {% csrf_token %}
+                     {{ form|crispy}}
+                     <button class="button is-success" type="submit">Login</button>
+             </form>
+
+          <br>
+          <nav class="level">
+            <div class="level-item has-text-centered">
+              <div>
+                <a href="{% url 'password_reset' %}">Forgot Password?</a>
+              </div>
             </div>
+            <div class="level-item has-text-centered">
+              <div>
+                <a href="{% url 'signup' %}">Create an Account</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
         </div>
     </div>
+ <footer class="section">
+      <div class="container">
+        <div class="pb-5 is-flex is-flex-wrap-wrap is-justify-content-between is-align-items-center">
+          <div class="mr-auto mb-2">
+            <a class="is-inline-block" href="#">
+              <img class="image" src="/static/logo/logo.png" alt="" width="196px"></a>
+          </div>
+          <div>
+            <ul class="is-flex is-flex-wrap-wrap is-align-items-center is-justify-content-center">
+              <li class="mr-4"><a class="button is-white" href="#">About</a></li>
+              <li class="mr-4"><a class="button is-white" href="#">Help?</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="pt-5" style="border-top: 1px solid #dee2e6;"></div>
+      <div class="container">
+        <div class="is-flex-tablet is-justify-content-between is-align-items-center">
+          <p>All rights reserved © Study Socio {% now 'Y' %} Created by Ibrahim Hakam</p>
+
+        </div>
+      </div>
+    </footer>
 
 {% endblock  %}
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

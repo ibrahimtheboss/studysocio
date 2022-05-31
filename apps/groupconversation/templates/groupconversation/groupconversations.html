@@ -5,15 +5,49 @@
     <div class="columns">
       <div class="column is-12">
           <h1 class="title">Conversations</h1>
+         <span><a href="{% url 'create_group'%}">
+              <button class="button is-danger is-rounded is-small" >Create a group</button></a></span>
 
           <div class="conversations-list">
+              <br>
+
               {% for groupconversation in groupconversations %}
+
                 <div class="conversations-list-item">
                     {% if request.user == groupconversation.users %}
+                    <a href="{% url 'groupconversation' groupconversation.groupconversation.id %}">
+                                <article class="media">
+  <figure class="media-left">
+    <p class="image is-64x64">
+      {% if groupconversation.groupconversation.groupimage %}
+      <img style=" vertical-align: middle;
+   height:65px;width:65px;" src="{{ groupconversation.groupconversation.groupimage.url }}">
+        {% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="content">
 
-                            <a href="{% url 'groupconversation' groupconversation.groupconversation.id %}">
+
+
                             <p>{{ groupconversation.groupconversation.name }} - {{ groupconversation.groupconversation.modified_at|naturaltime }}</p>
-                            </a>
+
+    </div>
+
+  </div>
+  <div class="media-right">
+       {% if groupconversation.groupconversation.created_by == request.user.studysocioprofile.user %}
+        <form action="deletegroup/{{groupconversation.groupconversation.id}}" method="post">
+
+       {% csrf_token %}
+         <button type="submit" class="delete" >Delete</button>
+        </form>
+       {% endif %}
+  </div>
+</article>
+</a>
+                    <br>
+
 
                     {% endif %}
               {% empty %}

@@ -1,10 +1,241 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'core/base.html'%}
+{% load humanize %}
+{% load embed_video_tags %}
+{% block upperscript%}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <!-- Bulma Version 0.9.0-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
 
-</body>
-</html>
+ <link rel="stylesheet" href=
+"https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+<style>
+
+.is-shady {
+animation: flyintoright .4s backwards;
+background: #fff;
+box-shadow: rgba(0, 0, 0, .1) 0 1px 0;
+border-radius: 4px;
+
+transition: all .2s ease-in-out;
+}
+.is-shady:hover {
+box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+
+  <div class="container" id="feedapp">
+      It is {% now "jS F Y H:i" %}
+    <div class="columns" >
+      <div class="column is-half is-offset-one-quarter" >
+          {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+          <br>
+
+            <div class="title">
+               <p>My Announcements <sup><small class="subtitle is-5">
+                  {% if announcement_list.count != None %} ({{announcement_list.count}}){% else %}(0){% endif %}</small></sup></p>
+<br>        {% if request.user.studysocioprofile.designation == 'Teacher' %}
+                <p class="level-right"><a href="{% url 'announcements' %}create_announcement/">
+               <button class="button is-info">+ Create an Announcement </button></a></p>
+                {% endif %}
+            </div>
+<br>
+
+          <div class="list has-visible-pointer-controls">
+              {% for announcement in announcement_list %}
+  <div class="list-item has-background-white-ter is-shady" style="padding:5%;">
+    <div class="list-item-content">
+      <div class="title is-5">{{ announcement.title }}</div>
+      <div class="list-item-description">{{ announcement.Description|linebreaks|urlizetrunc:15 }}</div>
+
+        {% if announcement.image %}
+
+        <div class="card-image" align="center">
+
+                    <figure class="image">
+                                    <img src="{{ announcement.image.url }}" alt=""style="width:256px;height:156px;" align="center">
+                    </figure>
+                </div>
+        {% endif %}
+
+        <div class="card-content" align="center">
+
+            {% video announcement.youtube_url as my_video %}
+            {% video my_video '256x156' %}
+            {% endvideo %}
+        </div>
+        <div class="card-content" align="center">
+            {% if announcement.video %}
+            <video width="256" height="156" controls>
+                <source src="{{announcement.video.url}}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="list-item-controls">
+      <div class="buttons is-right">
+            {% if announcement.created_by == request.user.studysocioprofile.user %}
+        <form action="{{ announcement.id }}/delete_announcement" method="post">
+            {% csrf_token %}
+        <button type="submit" class="button is-danger ">
+          <span class="icon is-small">
+            <i class="delete"></i>
+          </span>
+          <span>Delete</span>
+        </button>
+           </form>
+       {% endif %}
+          <a href="{% url 'edit_announcement' request.user announcement.id %}" ><button type="submit" class="button is-warning ">
+          <span class="icon is-small">
+            <i class="fas fa-edit"></i>
+          </span>
+          <span>Edit</span>
+          </button></a>
+      </div>
+        <div class="buttons is-right">
+             <p><i>{{ announcement.created_at }} </i></p>
+            </div>
+
+    </div>
+  </div>
+              <hr>
+              {% endfor %}
+</div>
+<hr>
+
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}
+
+{% block script %}
+
+
+<script>
+
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, "", window.location.href );
+    }
+
+
+     function ValidateFileUpload() {
+        var fuData = document.getElementById('feedimage');
+        var FileUploadPath = fuData.value;
+
+//To check if user upload any file
+        if (FileUploadPath == '') {
+            alert("Please upload an image");
+
+        } else {
+            var Extension = FileUploadPath.substring(
+                    FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+
+//The file uploaded is an image
+
+if (Extension == "png"
+     || Extension == "jpeg" || Extension == "jpg") {
+
+// To Display
+                if (fuData.files && fuData.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        $('#blah').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(fuData.files[0]);
+                }
+
+            }
+
+//The file upload is NOT an image
+else {
+                alert("Photo only allows file types of  PNG, JPG, JPEG. ");
+                window.location.reload();
+
+            }
+        }
+    }
+
+function divide() {
+            var body;
+            body = document.getElementById('body').value;
+            var text = txt.split(".");
+            var str = text.join('.</br>');
+            document.write(str);
+        }
+
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 4000)    // 3000 millisecond
+</script>
+  <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) window.scrollTo(0, scrollpos);
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+    </script>
+
+ <script>
+ {% if messages %}
+    {% for message in messages %}
+
+   function divide() {
+      alert("{{ message }}");
+   }
+
+    {% endfor %}
+{% endif %}
+</script>
+<script>
+  const fileInput = document.querySelector('#file-js-example input[type=file]');
+  fileInput.onchange = () => {
+    if (fileInput.files.length > 0) {
+      const fileName = document.querySelector('#file-js-example .file-name');
+      fileName.textContent = fileInput.files[0].name;
+    }
+  }
+</script>
+     <script>
+//$(document).ready(function(){
+//setInterval(function(){
+//      $("#here").load(document.URL + " #here" );
+//}, 3000);
+//});
+</script>
+{% endblock %}

@@ -1,0 +1,387 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% block upperscript %}
+<style>
+    .tabs {
+margin-bottom: -1px !important;
+position: relative;
+}
+.tab-content {
+padding: 60px;
+top: 197px;
+color: #000;
+background-color: white;
+}
+.tab-pane {
+display: none;
+}
+
+.is-active {
+display: initial;
+}
+
+.cent{
+display: block;
+margin: 10px auto;
+padding: 5px;
+border: 1px solid #ccc}
+
+.video
+{display: block;
+margin: 0 auto;}
+
+/* CSS from http://embedresponsively.com */
+.embed-container {
+	position: relative;
+	padding-bottom: 56.25%;
+	height: 0;
+	overflow: hidden;
+	max-width: 100%;
+}
+.embed-container iframe,
+.embed-container object,
+.embed-container embed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="container">
+    <div class="columns">
+      <div class="column is-12">
+          <span><a href="{% url 'classrooms'%}">Go back</a></span>
+          <br>
+          {% for class in classroom_details %}
+            <br>
+          <article class="media">
+  <figure class="media-left">
+    <p class="image is-128x128">
+        {% if class.classimage %}
+      <img src="{{class.classimage.url }}">
+        {% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="content">
+      <p>
+        <span><text class="title">{{ class.name }}</text></span>
+        <br>
+          <h3 class="subtitle is-5">{{ class.Description }}</h3>
+            <h3 class="subtitle is-7">Created by : {{ class.created_by }}</h3>
+        </p>
+    </div>
+      {% if request.user.studysocioprofile.designation == 'Teacher' %}
+ <div class="level-right">
+
+     <a href="{% url 'add_lesson_materials' class.id %}">
+         <button class="button" >+ Lesson</button></a>
+     <a href="{% url 'add_classroom_assignment' class.id  %}">
+         <button class="button" >+ Assignment</button></a>
+
+  </div>
+      <br>
+       <div class="level-right">
+           <a href="{% url 'add_classroom_members' class.id %}">
+               <button class="button">+ Member</button></a>
+  </div>
+      {% endif %}
+  </div>
+
+</article>
+          {% endfor %}
+          <div>
+              </div>
+
+          <br> 
+
+          <hr>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
+            <div class="tabs is-boxed is-centered main-menu" id="nav">
+                <ul>
+                    <li data-target="pane-1" id="1" class="is-active">
+                        <a>
+                            <span class="icon is-small"><i class="fa fa-image"></i></span>
+                            <span>Lessons Materials ({{lesson_materials.count}})</span>
+                        </a>
+                    </li>
+                    <li data-target="pane-2" id="2" >
+                        <a>
+                            <span class="icon is-small"><i class="fab fa-empire"></i></span>
+                            <span>Assignments {% if classroom_assignment.count == '' %}(0){% else %}({{classroom_assignment.count}}){% endif %}</span>
+                        </a>
+                    </li>
+                    <li data-target="pane-3" id="3">
+                        <a>
+                            <span class="icon is-small"><i class="fab fa-superpowers"></i></span>
+                            <span>Classroom Members ({{classroom_members.count}})</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="tab-content">
+
+
+                <div class="tab-pane is-active" id="pane-1">
+                    {% for lesson in lesson_materials %}
+    <div class="card">
+  <header class="card-header">
+    <p class="card-header-title">
+        {{lesson.name}}
+
+    </p>
+
+
+
+
+ {% if request.user.studysocioprofile.designation == 'Teacher' %}
+    {% if lesson.created_by == request.user.studysocioprofile.user %}
+<button class="card-header-icon" aria-label="more options">
+   <a href="{{lesson.id}}/edit_lesson_materials">
+       <button type="submit" class="button is-warning is-small">Edit</button></a>
+      <form action="{{lesson.id }}/delete_lesson_materials/" method="post">
+
+       {% csrf_token %}
+            <button type="submit" class="button is-danger is-small">Delete</button></a>
+        </form>
+</button>
+{% endif %}
+      {% endif %}
+  </header>
+  <div class="card-content">
+    <div class="content">
+       <p> {{ lesson.description|linebreaks|urlizetrunc:15 }}
+        </p>
+      <br>
+        <i class="level-left"> created @ {{ lesson.created_at|naturaltime }}</i>
+    </div>
+  </div>
+
+  <footer class="card-footer">
+      {% if lesson.materials %}
+    <a href="{{ lesson.materials.url }}" class="card-footer-item">Download</a>
+      {% else %}
+      <p class="card-footer-item">No Materials</p>
+      {% endif %}
+    <p class="card-footer-item" > <time datetime="2016-1-1" > <i class="level-right"> <b>last modified @ {{ lesson.modified_at|naturaltime }}</b> </i></time></p>
+  </footer>
+</div>     <br>     {% empty %}
+
+                    <p>No Lessons !!</p>
+                {% endfor %}
+                </div>
+
+                <div class="tab-pane" id="pane-2">
+                    <div class="content">
+                            {% for assignment in classroom_assignment %}
+    <div class="card">
+  <header class="card-header">
+    <p class="card-header-title">
+        {{assignment.name}}
+
+    </p>
+
+
+
+
+ {% if request.user.studysocioprofile.designation == 'Teacher' %}
+    {% if assignment.created_by == request.user.studysocioprofile.user %}
+<button class="card-header-icon" aria-label="more options">
+
+   <a href="{{assignment.id}}/edit_classroom_assignment">
+       <button type="submit" class="button is-warning is-small">Edit</button></a>
+      <form action="{{assignment.id }}/delete_classroom_assignment/" method="post">
+
+       {% csrf_token %}
+            <button type="submit" class="button is-danger is-small">Delete</button></a>
+        </form>
+
+</button>
+
+{% endif %}
+      {% endif %}
+  </header>
+  <div class="card-content">
+    <div class="content">
+       <p> {{ assignment.description|linebreaks|urlizetrunc:15 }}
+        </p>
+        <p> Total marks: {{ assignment.total_marks }}
+        </p>
+        <p> <b>Due Date on : {{ assignment.due_date }}</b>
+        </p>
+      <br>
+
+        <i class="level-left"> created @ {{ assignment.created_at|naturaltime }}</i>
+
+         {% if request.user.studysocioprofile.designation == 'Teacher' %}
+    {% if assignment.created_by == request.user.studysocioprofile.user %}
+              <button class="card-header-icon" aria-label="more options">
+          <a href="{{assignment.id}}/add_assignment_grades/">
+         <button class="button" >+ Grades</button></a>
+                   {% endif %}
+      {% endif %}
+
+
+
+                  <a href="{{assignment.id}}/view_submit_assignment/">
+         <button class="button" >+ View Submit Assignment</button></a>
+          </button>
+        {% if request.user.studysocioprofile.designation == 'Student' %}
+    <a href="{{assignment.id}}/submit_assignment/">
+         <button class="button" >+ Submit Assignment</button></a>
+          </button>
+
+        {% endif %}
+
+    </div>
+  </div>
+
+  <footer class="card-footer">
+      {% if assignment.assignmentdoc %}
+    <a href="{{ assignment.assignmentdoc.url }}" class="card-footer-item">Download</a>
+      {% else %}
+      <p class="card-footer-item">No Materials</p>
+      {% endif %}
+    <p class="card-footer-item" > <time datetime="2016-1-1" > <i class="level-right"> <b>last modified @ {{ assignment.modified_at|naturaltime }}</b> </i></time></p>
+  </footer>
+</div>     <br>     {% empty %}
+
+                    <p>No Lessons !!</p>
+                {% endfor %}
+                   </div>
+            </div>
+
+
+                <div class="tab-pane" id="pane-3">
+                    <div class="columns">
+                        <div class="container">
+                            <div class="columns">
+                                <div class="column is-12">
+          <h1 class="title">Members List </h1>
+
+          <div class="conversations-list">
+              {% for members in classroom_members %}
+               {% if members.users == members.classroom.created_by %}
+                        <p> Admin is  {{ members.classroom.created_by }} </p>
+                    {% endif %}
+              <br>
+              <article class="media">
+  <figure class="media-left">
+    <p class="image is-64x64">
+      {% if members.users.studysocioprofile.avatar %}
+      <img style=" vertical-align: middle;
+  border-radius: 50%; height:65px;width:90px;" src="{{ members.users.studysocioprofile.avatar.url }}">
+        {% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="content">
+
+
+                    <p>{{ members.users.username }} - {{ members.added_at|naturaltime }}</p>
+    </div>
+
+  </div>
+  <div class="media-right">
+       {% if members.classroom.created_by == request.user.studysocioprofile.user and members.users != request.user.studysocioprofile.user %}
+        <form action="{{members.users.id}}/remove_classroom_members/" method="post">
+
+       {% csrf_token %}
+         <button type="submit" class="button is-danger is-rounded is-small" >Remove</button>
+        </form>
+       {% endif %}
+  </div>
+</article>
+              <br>
+                <div class="conversations-list-item">
+
+
+
+
+              {% empty %}
+                    <p>No Members!</p>
+                </div>
+              {% endfor %}
+          </div>
+
+      </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+        </div>
+
+{% endblock %}
+{% block script %}
+<script>
+    document.querySelectorAll("#nav li").forEach(function(navEl) {
+  navEl.onclick = function() { toggleTab(this.id, this.dataset.target); }
+});
+
+function toggleTab(selectedNav, targetId) {
+  var navEls = document.querySelectorAll("#nav li");
+
+  navEls.forEach(function(navEl) {
+    if (navEl.id == selectedNav) {
+      navEl.classList.add("is-active");
+    } else {
+      if (navEl.classList.contains("is-active")) {
+        navEl.classList.remove("is-active");
+      }
+    }
+  });
+
+  var tabs = document.querySelectorAll(".tab-pane");
+
+  tabs.forEach(function(tab) {
+    if (tab.id == targetId) {
+      tab.style.display = "block";
+    } else {
+      tab.style.display = "none";
+    }
+  });
+}
+</script>
+
+
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

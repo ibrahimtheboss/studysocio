@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+
 from django.utils import timezone
 from django.utils.timezone import utc
 
@@ -58,9 +59,15 @@ class Assignment(models.Model):
     assignmentdoc = models.FileField(upload_to='Class_Assignment/', blank=True)
     classroom = models.ForeignKey(Classroom, related_name='assignment', on_delete=models.CASCADE)
     due_date = models.DateTimeField(null=True, blank=True, default=None, validators=[validate_date])
+    total_marks = models.IntegerField(default=100)
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name='assignmentcreator', on_delete=models.CASCADE)
+    STATUS = (
+        ('Available', 'Available'),
+        ('Due', 'Due'),
+    )
+    status = models.CharField(max_length=10, default='Available', choices=STATUS, blank=True)
 
     # def get_time_diff(self):
     # if self.time_posted:
@@ -74,7 +81,7 @@ class Assignment(models.Model):
     # super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.name}' + " in the class of " + f'{self.classroom}'
+        return f'{self.name}' + " created at  " + f'{self.created_at}'
 
     class Meta:
         ordering = ['-modified_at']
@@ -85,7 +92,6 @@ class LessonMaterials(models.Model):
     description = models.CharField(max_length=1000, null=True, blank=True, )
     materials = models.FileField(upload_to='Lesson_materials/', blank=True)
     classroom = models.ForeignKey(Classroom, related_name='lessonmaterials', on_delete=models.CASCADE)
-    total_marks = models.IntegerField(default=100)
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name='lessoncreator', on_delete=models.CASCADE)
@@ -122,6 +128,7 @@ class AssignmentGrades(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name='assignmnetmarker', on_delete=models.CASCADE)
+
 
     def __str__(self):
         return f'{self.assignment}' + " marks for  " + f'{self.user}' + " with " + f'{self.marks}'

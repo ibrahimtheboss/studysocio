@@ -3,30 +3,132 @@
 {% block content %}
 <div class="container">
     <div class="columns">
-      <div class="column is-12">
-          <h1 class="title">Conversations</h1>
-          <div class="conversations-list">
-              {% for directconversation in directconversations %}
+        <div class="column is-12">
+            <h1 class="title">Conversations</h1>
+            <div class="conversations-list">
+                {% for directconversation in directconversations %}
                 <div class="conversations-list-item">
                     {% for user in directconversation.users.all %}
-                        {% if user != request.user %}
+                    {% if user != request.user %}
 
-                            <a href="{% url 'directconversation' user.id %}">
-                            <p>{{ user.username }} - {{ directconversation.modified_at|naturaltime }}</p>
-                            </a> -<form action="{{user.id}}/deleteall/{{ directconversation.id }}" method="post">
+                        <article class="media" style="width:100%;">
+<a href="{% url 'directconversation' user.id %}">
+                            <figure class="media-left">
+                                <p class="image is-64x64">
+                                    {% if user.studysocioprofile.avatar %}
+                                    <img style=" vertical-align: middle;
+   height:65px;width:65px;" src="{{ user.studysocioprofile.avatar.url }}">
+                                    {% endif %}
+                                </p>
+                            </figure>
+                             </a>
+                            <div class="media-content">
+                                <div class="content">
 
-                                       {% csrf_token %}
-                                         <input type="submit" class="button is-warning" value="Delete">
-                                        </form>
-                        {% endif %}
-                    {% endfor %}
-              {% empty %}
-                    <p>No conversations!</p>
-                </div>
-              {% endfor %}
-          </div>
+                                    <h5 class="title is-5">{{ user.username }} - {{ directconversation.modified_at|naturaltime }}</h5>
+                                </div>
 
+                            </div>
+                            <div class="media-right">
+    <div class="js-modal-trigger" data-target="modal-js-reply">
+        <button class="delete"></button>
+</div>
+
+                            </div>
+                        </article>
+
+                                        <div id="modal-js-reply" class="modal">
+  <div class="modal-background"></div>
+
+  <div class="modal-content">
+    <div class="box">
+      <div class="container">
+      <h1 class="title">Delete Conversation</h1>
+      <p>Are you sure you want to delete the  Conversation you will lose all data ?</p>
+<br>
+      <div>
+          <div class="columns is-centered is-mobile">
+              <form class="row">
+        <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
+</form>
+              &nbsp; &nbsp;&nbsp; &nbsp;
+         <form class="row" action="{{user.id}}/deleteall/{{ directconversation.id }}" method="post">
+
+       {% csrf_token %}
+         <button type="submit"  class="button is-danger" > Delete</button>
+        </form>
+              </div>
       </div>
     </div>
+      <!-- Your content -->
+    </div>
+  </div>
+
+  <button class="modal-close is-large" aria-label="close"></button>
 </div>
+
+
+
+                    <br>
+
+
+                    {% endif %}
+                    {% endfor %}
+                    {% empty %}
+                    <p>No conversations!</p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+  // Functions to open and close a modal
+  function openModal($el) {
+    $el.classList.add('is-active');
+  }
+
+  function closeModal($el) {
+    $el.classList.remove('is-active');
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  // Add a click event on buttons to open a specific modal
+  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener('click', () => {
+      openModal($target);
+    });
+  });
+
+  // Add a click event on various child elements to close the parent modal
+  (document.querySelectorAll('.modal-background, .modal-closed ,.modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
+
+    $close.addEventListener('click', () => {
+      closeModal($target);
+    });
+  });
+
+  // Add a keyboard event to close all modals
+  document.addEventListener('keydown', (event) => {
+    const e = event || window.event;
+
+    if (e.keyCode === 27) { // Escape key
+      closeAllModals();
+    }
+  });
+});
+</script>
 {% endblock %}

@@ -4,25 +4,66 @@
 
 {% endblock %}
 {% block content %}
+{% for x in userss %}
+   <div class="column has-background-success" style=" position:absolute ;
+
+    z-index:9;overflow: hidden;
+ background: #F5F5F5;
+  position: sticky;
+  top: 7%;
+  width: 100%; padding:8px">
+
+
+      <div class="column is-12 " >
+<article class="media">
+  <figure class="media-left">
+    <p class="image is-64x64">
+      {% if x.studysocioprofile.avatar %}
+      <img style=" vertical-align: middle;
+  border-radius: 50%; height:65px;width:90px;" src="{{ x.studysocioprofile.avatar.url }}">
+        {% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="content has-text-white-bis" style="margin-top:1%;">
+      <p>Conversation
+          <B> <span class="content is-large" > @ {{x.username}}:  {{x.first_name}} {{x.last_name}}</span></B>
+          <span class="content is-small" >{% if x.studysocioprofile.is_online == True %}: Online  {% else %} Offline  {% endif %}</span>
+   </p>
+
+    </div>
+
+  </div>
+</article>
+
+ </div>
+
+ </div>
+{% endfor %}
+<br>
+
+
 <div class="container" id="directconversationapp">
     <div class="columns" >
-      <div class="column is-12">
-          <h1 class="title">Conversation</h1>
-          <div class="message" id="chat">
-              {% for message in directconversation.messages.all %}
-              <div class="postfeed" >
+        <div class="column is-12">
+            <div class="message" id="chat">
+                {% for message in directconversation.messages.all %}
+
+ <div class="postfeed" >
                   <article class="media"  >
+                      {% if message.created_by.studysocioprofile.user != request.user.studysocioprofile.user  %}
                       <figure class="media-left">
                           <p class="image is-64x64">
                               {% if message.created_by.studysocioprofile.avatar %}
                                 <img src="{{ message.created_by.studysocioprofile.avatar.url }}">
                               {% endif %}
                           </p>
-
                       </figure>
-
+                      {% endif %}
+<br>
                        <div class="media-content">
                           <div class="content">
+                              <div {% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %} class="notification is-primary is-light"{% else %} class="notification" {% endif %}>
                               <p>
                                   <strong>@ {{ message.created_by.username }}</strong>
                                   <small>{{ message.created_at|naturaltime }}</small>
@@ -33,64 +74,90 @@
                                     <img src="{{ message.image.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
                                   {% endif %}
 
-                                  {% if message.created_by == request.user.studysocioprofile.user %}
 
+                              </p>
+                          </div>
+                              </div>
+                      </div>
+                      {% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %}
+                      <figure class="media-right">
+                          <p class="image is-64x64">
+                              {% if message.created_by.studysocioprofile.avatar %}
+                                <img src="{{ message.created_by.studysocioprofile.avatar.url }}">
+                              {% endif %}
+                          </p>
+                      </figure>
+                      {% endif %}
+                                    {% if message.created_by == request.user.studysocioprofile.user %}
+
+                            <div class="media-left">
                                         <form action="{{user.id}}/delete/{{ message.id }}" method="post">
 
                                        {% csrf_token %}
-                                         <input type="submit" class="button is-warning" value="Delete">
+                                         <button type="submit" class="delete"></button>
                                         </form>
-                                  {% endif %}
-                              </p>
-                          </div>
-                      </div>
+
+
+                            </div>
+                      {% endif %}
                   </article>
+                  <br>
               </div>
 
 
               {% endfor %}
-             <!--<div class="postfeed" v-for="message in messages">
-                 <article class="media" >
-                      <figure class="media-left">
-                          <p class="image is-64x64">
-                                <img :src="message.avatar">
-                          </p>
 
-                      </figure>
+            </div>
 
-                       <div class="media-content">
-                          <div class="content">
-                              <p>
-                                  <strong>@ [[ message.users ]]</strong>
-                                  <small>[[ message.created_at ]]</small>
-                                  <br>
-                                  [[ message.content ]]
-                                  <br>
-
-<br>
-                              </p>
-                              <p v-if="message.image">
-                                    <br>
-                                    <img  :src="[[message.image]]" alt="" class="card-img-top" width="400" height="400"align="center">
-                              </p>
-                          </div>
-                      </div>
-                  </article>
-             </div>-->
-          </div>
-
-      </div>
+        </div>
     </div>
 
     <hr>
+  {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
 
-    <form method = "post" v-on:submit.prevent="submitMessage()" enctype="multipart/form-data">
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+    <form method = "post" v-on:submit.prevent="submitMessage()" enctype="multipart/form-data" style=" position:absolute;
+padding-bottom:1%;
+    z-index:9;overflow: hidden;
+ background: #F5F5F5;
+  position: sticky;
+  bottom:0%;
+  width: 100%;">
         <div class="field">
             {% csrf_token %}
               <div class="control">
-                <textarea class="textarea" v-model="content" name="content" id="content" placeholder="Your message" ></textarea>
+                <textarea class="textarea is-small " v-model="content" name="content" id="content" placeholder="Your message"  ></textarea>
                 <!--{{ form.as_p }}-->
-                <input type="file"  name="image" id="image" accept="image/*"  @change="previewImage" />
+                  <br>
+                  <div id="file-js-example" class="file has-name">
+  <label class="file is-small has-name is-warning ">
+    <input class="file-input" type="file" name="image" id="image" accept="image/*"  @change="previewImage">
+    <span class="file-cta">
+      <span class="file-icon">
+        <i class="fas fa-upload"></i>
+      </span>
+      <span class="file-label">
+        Choose a file…
+      </span>
+    </span>
+    <span class="file-name">
+      No file uploaded
+    </span>
+  </label>
+</div>
 
 
               </div>
@@ -113,7 +180,7 @@
     window.onload = scrollToBottom;
 
 </script>
-     <script>
+<script>
 $(document).ready(function(){
 setInterval(function(){
       $("#chat").load(document.URL + " #chat" );

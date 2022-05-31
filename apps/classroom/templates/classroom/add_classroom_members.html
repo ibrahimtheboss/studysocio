@@ -1,0 +1,89 @@
+{% extends 'core/base.html'  %}
+{% load crispy_forms_tags %}
+
+
+{% block upperscript%}
+(<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>)
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="columns">
+      <div class="column is-12">
+          <span><a href="{% url 'classroom_activity' obj.id %}">Go back</a></span>
+          <h1 class="title">Add Members to {{obj.name}}</h1>
+          <div>
+           {% if obj.classimage %}
+              <article class="media">
+            <figure class="media">
+                <p class="image is-128x128">
+                <img src="{{ obj.classimage.url }}">
+                </p>
+            </figure>
+           {% endif %}
+                  </article>
+              </div>
+
+          <br> <br><br>
+          <p class="bold">Group Created by {{ obj.created_by }}</p>
+
+{{ form.media.css }}
+    <style>
+        input, select {width: 20%}
+    </style>
+   {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+          <form method="post" enctype="multipart/form-data" >
+              {% csrf_token %}
+              {{ form.media}}
+              <div class="form-group">
+                  <label><font class="label" > User:</font></label>
+                  {{ form.users }}
+              </div>
+              <br>
+
+                <hr>
+              <div class="field">
+                  <div class="control">
+                      <button class="button is-success">Add User</button>
+                  </div>
+              </div>
+          </form>
+
+      </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
+{% endblock %}

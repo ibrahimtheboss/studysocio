@@ -24,8 +24,9 @@ class StudySocioProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False)
     bio = models.CharField(max_length=250, blank=True)
-    field_of_study = models.CharField(max_length=40, default=' ', blank=True)
-    education_center = models.CharField(max_length=60, blank=True)
+    field_of_study = models.CharField(max_length=300, default=' ', blank=True)
+    field_of_teaching = models.CharField(max_length=300, default=' ', blank=True)
+    education_center = models.CharField(max_length=100, blank=True)
     DESIGNATION = (
         ('Student', 'Student'),
         ('Teacher', 'Teacher'),
@@ -38,15 +39,18 @@ class StudySocioProfile(models.Model):
     )
     gender = models.CharField(max_length=6, choices=GENDER, blank=True)
     country = CountryField(blank_label='(select country)')
-    avatar = models.ImageField(upload_to='uploads/', blank=True, null=True)
+    avatar = models.ImageField(upload_to='uploads/',default="../static/img/user.jpg", blank=True, null=True)
+    background_image = models.ImageField(upload_to='backgrounds/', default="../static/img/user.jpg", blank=True, null=True)
     PROFILESTATUS = (
         ('Public', 'Public'),
         ('Private', 'Private'),
     )
     profilestatus = models.CharField(max_length=7, choices=PROFILESTATUS, blank=True)
+    is_online = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.username}'
+
 
 
 if User != User.is_superuser:

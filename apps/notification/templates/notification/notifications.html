@@ -7,9 +7,16 @@
     <div class="columns">
       <div class="column is-12">
           <h1 class="title">Notifications</h1>
+          <div class="level-right">
+<form action="{% url 'notificationsclear' %}" method="post">
 
+                                       {% csrf_token %}
+                                         <input type="submit" class="button is-warning is-small"  value="Clear All">
+                                        </form>
+              </div>
           {% if not notifications %}
             <p>You have no Nofifications!!</p>
+
           {% endif %}
 
           <div class="wrapper-ssuser">
@@ -55,6 +62,24 @@
                                         <strong>{{ notification.created_by.username}}</strong> commented in a Post
                                         <small>{{ notification.created_at|naturaltime }}</small>
                                     </a>
+                                  {% elif notification.notification_type == 'like_article' %}
+                                    <a href="{% url 'notifications' %}?goto=article&notification={{ notification.id }}">
+                                        {% if notification.created_by.username == request.user.username  %}
+                                            <strong>You </strong> liked one of your Article
+                                        {% else %}
+                                            <strong>{{ notification.created_by.username}}</strong> liked one of your Article
+                                        {% endif %}
+                                        <small>{{ notification.created_at|naturaltime }}</small>
+                                    </a>
+                                    {% elif notification.notification_type == 'like_lesson' %}
+                                    <a href="{% url 'notifications' %}?goto=your_lessons&notification={{ notification.id }}">
+                                        {% if notification.created_by.username == request.user.username  %}
+                                            <strong>You </strong> liked one of your Lesson
+                                        {% else %}
+                                            <strong>{{ notification.created_by.username}}</strong> liked one of your Lesson
+                                        {% endif %}
+                                        <small>{{ notification.created_at|naturaltime }}</small>
+                                    </a>
                                   {% endif  %}
 
 
@@ -63,11 +88,7 @@
                       </div>
                   </article>
               {% endfor %}
-                                        <form action="{% url 'notificationsclear' %}" method="post">
 
-                                       {% csrf_token %}
-                                         <input type="submit" class="button is-warning" value="Clear All">
-                                        </form>
           </div>
       </div>
     </div>

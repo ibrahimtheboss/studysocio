@@ -1,10 +1,267 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'core/base.html'%}
+{% load humanize %}
+{% load embed_video_tags %}
+{% block upperscript%}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <!-- Bulma Version 0.9.0-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
 
-</body>
-</html>
+ <link rel="stylesheet" href=
+"https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+
+{% endblock %}
+
+{% block content %}
+
+
+
+  <div class="container" id="feedapp">
+      It is {% now "jS F Y H:i" %}
+    <div class="columns" >
+      <div class="column is-half is-offset-one-quarter" >
+          {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+          <br>
+
+            <div class="title">
+               <p>All Announcements</p>
+<br>        {% if request.user.studysocioprofile.designation == 'Teacher' %}
+                <p class="level-right"><a href="{% url 'announcements' %}create_announcement/">
+               <button class="button is-info">+ Create an Announcement </button></a></p>
+                <br>
+                <p class="level-right"><a href="{% url 'my_announcements' request.user %}">
+               <button class="button is-primary">>> My Announcements </button></a></p>
+                {% endif %}
+            </div>
+<hr>
+
+      </div>
+
+    </div>
+{% for announcement in announcement_list %}
+      <div class="columns body-columns">
+
+        <div class="column is-half is-offset-one-quarter">
+            <div class="card has-background-white-ter" >
+                <div class="card-content">
+
+
+                    <div class="content">
+                        <article class="media" >
+
+  <div class="media-content" >
+
+<div class="content">
+  <div class="content" >
+      <p class="title is-4 has-text-centered">
+          {{ announcement.title }}
+      </p>
+        <span>
+          <i class="media-left">
+    <p class="image is-64x64"style="float: left;">
+      {% if announcement.created_by.studysocioprofile.avatar %}
+                <img class="avatar" src="{{ announcement.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+  border-radius: 50%; height:65px;width:90px;">
+
+                              {% endif %}
+    </p>
+
+  </i> </span>
+
+          <p class="level-left" > <strong style="font-size:20px;">&nbsp; By :  <b>{{announcement.created_by.first_name}} {{announcement.created_by.last_name}}</b> </strong><span><strong>&nbsp;&nbsp;@ <a href="{% url 'studysocioprofile' announcement.created_by.username %}">{{ announcement.created_by.username }}</a></strong></span>
+              <small>&nbsp; posted <i>{{ announcement.created_at|naturaltime }}</i></small> </p>
+
+
+        <p></p>
+  </div>
+</div>
+<br>
+
+    <div class="content">
+      <p>
+          {{ announcement.Description|linebreaks|urlizetrunc:15 }}
+      </p>
+        {% if announcement.image %}
+
+        <div class="card-image">
+
+                    <figure class="image is-3by2">
+                                    <img src="{{ announcement.image.url }}" alt="" class="card-img-top" width="400" height="400"align="center">
+                    </figure>
+                </div>
+        {% endif %}
+
+    </div>
+
+    <div class="card-content">
+
+           {% video announcement.youtube_url as my_video %}
+    {% video my_video 'tiny' %}
+        {% endvideo %}
+    </div>
+       <div class="card-content">
+           {% if announcement.video %}
+<video width="420" height="315" controls>
+  <source src="{{announcement.video.url}}" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+           {% endif %}
+    </div>
+  </div>
+  <div class="media-right ">
+
+      {% if announcement.created_by == request.user.studysocioprofile.user %}
+        <form action="delete/{{ announcement.id }}" method="post">
+
+       {% csrf_token %}
+         <button type="submit" class="delete is-warning" ></button>
+        </form>
+       {% endif %}
+  </div>
+</article>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+
+      {% endfor %}
+
+
+
+  </div>
+
+{% endblock %}
+
+{% block script %}
+
+
+<script>
+
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, "", window.location.href );
+    }
+
+
+     function ValidateFileUpload() {
+        var fuData = document.getElementById('feedimage');
+        var FileUploadPath = fuData.value;
+
+//To check if user upload any file
+        if (FileUploadPath == '') {
+            alert("Please upload an image");
+
+        } else {
+            var Extension = FileUploadPath.substring(
+                    FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+
+//The file uploaded is an image
+
+if (Extension == "png"
+     || Extension == "jpeg" || Extension == "jpg") {
+
+// To Display
+                if (fuData.files && fuData.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        $('#blah').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(fuData.files[0]);
+                }
+
+            }
+
+//The file upload is NOT an image
+else {
+                alert("Photo only allows file types of  PNG, JPG, JPEG. ");
+                window.location.reload();
+
+            }
+        }
+    }
+
+function divide() {
+            var body;
+            body = document.getElementById('body').value;
+            var text = txt.split(".");
+            var str = text.join('.</br>');
+            document.write(str);
+        }
+
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 4000)    // 3000 millisecond
+</script>
+  <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var scrollpos = localStorage.getItem('scrollpos');
+            if (scrollpos) window.scrollTo(0, scrollpos);
+        });
+
+        window.onbeforeunload = function(e) {
+            localStorage.setItem('scrollpos', window.scrollY);
+        };
+    </script>
+
+ <script>
+ {% if messages %}
+    {% for message in messages %}
+
+   function divide() {
+      alert("{{ message }}");
+   }
+
+    {% endfor %}
+{% endif %}
+</script>
+<script>
+  const fileInput = document.querySelector('#file-js-example input[type=file]');
+  fileInput.onchange = () => {
+    if (fileInput.files.length > 0) {
+      const fileName = document.querySelector('#file-js-example .file-name');
+      fileName.textContent = fileInput.files[0].name;
+    }
+  }
+</script>
+     <script>
+//$(document).ready(function(){
+//setInterval(function(){
+//      $("#here").load(document.URL + " #here" );
+//}, 3000);
+//});
+</script>
+{% endblock %}

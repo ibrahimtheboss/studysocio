@@ -1,32 +1,89 @@
 {% extends 'core/base.html'  %}
+
+
+
+{% block upperscript%}
+(<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>)
+
+{% endblock %}
+
 {% block content %}
+
 <div class="container">
     <div class="columns">
       <div class="column is-12">
-          <h1 class="title">add memebers Profile</h1>
-           {% if user.studysocioprofile.avatar %}
-            <figure class="image is-128x128">
-                <img src="{{ user.studysocioprofile.avatar.url }}">
+          <span><a href="{% url 'groupconversation' obj.id %}">Go back</a></span>
+          <h1 class="title">Add Members to {{obj.name}}</h1>
+          <div>
+           {% if obj.groupimage %}
+              <article class="media">
+            <figure class="media">
+                <p class="image is-128x128">
+                <img src="{{ obj.groupimage.url }}">
+                </p>
             </figure>
            {% endif %}
-          <hr>
-          <h3 class="bold">Username : @ {{ user.username }}</h3>
-          <hr>
-          <h3 class="bold">Designation :  {{ user.studysocioprofile.designation }}</h3>
+                  </article>
+              </div>
 
-          <hr>
+          <br> <br><br>
+          <p class="bold">Group Created by {{ obj.created_by }}</p>
 
-          <form method="post" enctype="multipart/form-data" action=".">
+{{ form.media.css }}
+    <style>
+        input, select {width: 20%}
+    </style>
+   {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+          <form method="post" enctype="multipart/form-data" >
               {% csrf_token %}
-              {{ form.as_p}}
+              {{ form.media}}
+              <div class="form-group">
+                  <label><font class="label" > User:</font></label>
+                  {{ form.users }}
+              </div>
+              <br>
+
                 <hr>
               <div class="field">
                   <div class="control">
-                      <button class="button is-success">Save Changes</button>
+                      <button class="button is-success">Add User</button>
                   </div>
               </div>
           </form>
+
       </div>
     </div>
+
 </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
 {% endblock %}

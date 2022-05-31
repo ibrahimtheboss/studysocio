@@ -3,33 +3,22 @@ from urllib import request
 from django import forms
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
+from emoji_picker.widgets import EmojiPickerTextarea, EmojiPickerTextareaAdmin
 
 from .models import PostFeed
 from django.forms import TextInput, ImageField
 
 
-class PostFeedForm(forms.ModelForm):
-    body = forms.CharField()
-    body.widget.attrs.update({'placeholder': 'Name', 'style': 'width: 300px;', 'class': 'form-control'})
-
-    feedimage = forms.ImageField()
-    #feedimage.widget.attrs.update({'placeholder': 'Email', 'style': 'width: 300px;', 'class': 'button',"accept": "image/jpeg"})
-
-    class Meta:
-        model = PostFeed
-        # PostFeed.feedimage = forms.ImageField(validators=[FileExtensionValidator(allowed_extensions=['jpg'])])
-
-        fields = ['body', 'feedimage']
 
 class PostFeedForm(forms.ModelForm):
-    replybody = forms.CharField()
-    replybody.widget.attrs.update({'placeholder': 'Name', 'style': 'width: 100px;', 'class': 'form-control'})
-
     class Meta:
         model = PostFeed
-        # PostFeed.feedimage = forms.ImageField(validators=[FileExtensionValidator(allowed_extensions=['jpg'])])
+        fields = ['body','topic']
+        widgets = {
+            'topic': forms.Select(attrs={'name':"topic", "id":"topic", 'placeholder': 'Topic'}),
+            'body':EmojiPickerTextarea(attrs={ 'cols': 80, 'row':30,'class': 'textarea is-primary','name':"body", "id":"body", 'placeholder': 'What are you Posting?'})
+        }
 
-        fields = ['body', 'feedimage']
 
 
 

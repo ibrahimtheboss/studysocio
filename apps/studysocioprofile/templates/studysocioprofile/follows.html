@@ -9,14 +9,48 @@
           <p>Num: {{ user.studysocioprofile.follows.count }}</p>
       </div>
     </div>
-
-    <div class="columns">
-        <div class="column is-8">
-            {% if request.user == user %}
+    {% if request.user == user %}
             {% for ssuser in user.studysocioprofile.follows.all %}
-            <p><a href="{% url 'studysocioprofile' ssuser.user.username %}">{{ ssuser.user.username }}</a></p>
-            - <a href="{% url 'unfollow_ssuser' ssuser.user.username %}">Unfollow User[X]</a>
-            {% empty %}
+<div class="column is-5">
+    <article class="media">
+  <figure class="media-left">
+    <p class="image">
+        {% if ssuser.avatar %}
+       <img src="{{ ssuser.avatar.url }}" style=" width: 64px;
+    height: 64px;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 50%;
+        background-repeat: no-repeat;"  alt="Circle Image">{% endif %}
+    </p>
+  </figure>
+  <div class="media-content">
+    <div class="field">
+      <p class="control">
+        <p class="" ><b>{{ ssuser.user.first_name }} {{ ssuser.user.last_name }}</b></p>
+        <p class="" ><a href="{% url 'studysocioprofile' ssuser.user.username %}">@ {{ ssuser.user.username }}</a></p>
+      </p>
+          <nav class="level-right">
+
+      <div class="level-right">
+
+            <a href="{% url 'unfollow_ssuser' ssuser.user.username %}">
+        <button class="button is-danger is-small is-rounded">
+          <span class="icon is-small">
+            <i class="delete"></i>
+          </span>
+          <span>Unfollow User</span>
+        </button></a>
+
+      </div>
+    </nav>
+    </div>
+
+  </div>
+</article>
+</div>
+    <hr>
+     {% empty %}
                 {% if request.user == user %}
                     <p>You don't follow Anyone!</p>
                 {% else %}
@@ -25,8 +59,6 @@
             {% endfor %}
             {% endif %}
 
-        </div>
-    </div>
 </div>
 {% endblock %}
 
