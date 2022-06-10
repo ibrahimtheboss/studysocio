@@ -6,10 +6,13 @@ from .models import StudySocioProfile
 
 
 class StudySocioProfileForm(forms.ModelForm):
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
     class Meta:
         model = StudySocioProfile
-        fields = ('avatar','bio', 'field_of_study', 'field_of_teaching',
+        fields = ('avatar','bio', 'field',
                   'education_center', 'gender', 'country', 'profilestatus', 'background_image')
+
+
 
         widgets = {
             'avatar': forms.ClearableFileInput(
@@ -18,9 +21,8 @@ class StudySocioProfileForm(forms.ModelForm):
                 attrs={'class': 'file is-primary', 'accept': 'image/*', 'type': 'file'}),
             'bio': forms.Textarea(attrs={'class': 'textarea', 'placeholder': 'About yourself , interest on research '
                                                                              'Study, Education etc.'}),
-            'field_of_study': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Eg: Computer Science'}),
-            'field_of_teaching': forms.TextInput(attrs={'class': 'input',
-                                                        'placeholder': 'Eg: Civil Engineering '                                                                             'Discipline '}),
+            'field': forms.TextInput(attrs={'class': 'input',
+                                                        'placeholder': 'Eg: Civil Engineering ,Computer Science'                                                                             'Discipline '}),
             'education_center': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Eg: University of Cambridge'}),
             'gender': forms.Select(attrs={'class': 'select is-rounded'}),
             'country': forms.Select(attrs={'class': 'select is-rounded'}),
@@ -32,12 +34,13 @@ class StudySocioProfileForm(forms.ModelForm):
         self.fields['avatar'].label = "Profile Picture"
         self.fields['background_image'].label = "Profile Background Image"
         self.fields['bio'].label = "Bio"
-        self.fields['field_of_study'].label = "Field of Study"
-        self.fields['field_of_teaching'].label = "Field of Teaching"
+        self.fields['field'].label = "Field"
         self.fields['education_center'].label = "Education Center"
         self.fields['gender'].label = "Gender"
         self.fields['country'].label = "Country"
         self.fields['profilestatus'].label = "Profile Status"
+
+
 
 class EditProfileForm(ModelForm):
     class Meta:

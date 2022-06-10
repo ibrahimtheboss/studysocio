@@ -1,10 +1,11 @@
+import hashids
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-
+from apps.core.utils import h_encode , h_decode
 # Create your views here.
 from apps.topic.models import Topic
 from apps.videolessons.forms import VideoLessonForm
@@ -82,6 +83,7 @@ def lessons(request,category_id):
 
 @login_required
 def per_lesson(request,category_id,lesson_id):
+    print(lesson_id)
     lessons = VideoLesson.objects.get(id=lesson_id)
     userids = [request.user.id]
 

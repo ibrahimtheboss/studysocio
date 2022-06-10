@@ -12,6 +12,22 @@
           <h3 class="bold">Designation :  {{ user.studysocioprofile.designation }}</h3>
 
           <hr>
+            {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
 
           <form method="post" enctype="multipart/form-data" action=".">
               {% csrf_token %}
@@ -26,4 +42,14 @@
       </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
 {% endblock %}

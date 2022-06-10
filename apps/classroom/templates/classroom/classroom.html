@@ -145,19 +145,19 @@ footer li:before {
                   {% if request.user.studysocioprofile.designation == 'Teacher' %}
 
                   {% if myclassroom.classroom.created_by == request.user.studysocioprofile.user %}
-        <form action="{{myclassroom.classroom.id}}/delete_classroom/" method="post">
+        <form action="{{myclassroom.classroom.get_hashid}}/delete_classroom/" method="post">
 
        {% csrf_token %}
             <button type="submit" class="tag is-danger" style="position:absolute; top: 5%;left: 80%;">Delete</button>
         </form>
 
-           <a href = "{{myclassroom.classroom.id}}/edit_classroom" >
+           <a href = "{{myclassroom.classroom.get_hashid}}/edit_classroom" >
 
 
                <button type="submit" class="tag is-warning" style="position:absolute; top: 5%;left: 63%;">Edit</button></a>
             {% endif %}
                   {% elif request.user.studysocioprofile.designation == 'Student' %}
-                  <form action="{{myclassroom.classroom.id}}/leave_classroom/" method="post">
+                  <form action="{{myclassroom.classroom.get_hashid}}/leave_classroom/" method="post">
 
        {% csrf_token %}
             <button type="submit" class="tag is-danger" style="position:absolute; top: 5%;left: 80%;">Leave</button>

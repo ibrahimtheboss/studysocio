@@ -31,10 +31,12 @@ def signup(request):
             user.refresh_from_db()
             user.studysocioprofile.designation = form.cleaned_data.get('designation')
             user.save()
+            #messages.success(request, 'Successfully Created A Study-Socio Account !!')
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user)
+
 
             return redirect('frontpage')
     else:

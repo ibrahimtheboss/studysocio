@@ -45,6 +45,20 @@ class AssignmentForm(forms.ModelForm):
             'due_date': DateTimePickerInput(),
             'total_marks': forms.TextInput()
         }
+class AssignmentEditForm(forms.ModelForm):
+
+    class Meta:
+        model = Assignment
+        fields = ['name','description','assignmentdoc','due_date','total_marks']
+        widgets = {
+            'due_date': DateTimePickerInput(),
+            'total_marks': forms.TextInput()
+        }
+class AssignmenStatusForm(forms.ModelForm):
+
+    class Meta:
+        model = Assignment
+        fields = ['status']
 
 
 class SubmitAssignmentForm(forms.ModelForm):

@@ -2,9 +2,11 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
+from django.urls import reverse
 from django.utils import timezone
 from embed_video.fields import EmbedVideoField
 
+from apps.core.utils import h_encode , h_decode
 from apps.topic.models import Topic
 
 
@@ -25,6 +27,15 @@ class VideoLesson(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_hashid(self):
+        return h_encode(self.id)
+    def get_decode_hashid(self):
+        return h_decode(self.id)
+
+
+    def get_absolute_url(self):
+        return reverse("per_lesson", args=[self.id])
 
     class Meta:
         ordering = ['-modified_at']

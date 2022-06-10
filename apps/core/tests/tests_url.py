@@ -25,3 +25,5 @@ class HomePageTests(SimpleTestCase):
         response = self.client.get('/signup/')
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'core/signup.html')
+
+

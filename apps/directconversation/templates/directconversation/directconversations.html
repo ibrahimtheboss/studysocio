@@ -52,7 +52,7 @@
         <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
 </form>
               &nbsp; &nbsp;&nbsp; &nbsp;
-         <form class="row" action="{{user.id}}/deleteall/{{ directconversation.id }}" method="post">
+         <form class="row" action="{{user.id}}/deleteall/{{ directconversation.get_hashid }}" method="post">
 
        {% csrf_token %}
          <button type="submit"  class="button is-danger" > Delete</button>

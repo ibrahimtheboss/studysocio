@@ -59,9 +59,8 @@ INSTALLED_APPS = [
     'datetimepicker',
     'flatpickr',
     'embed_video',
-'emoji_picker',
-
-
+    'emoji_picker',
+    'infscroll',
 
     'apps.groupconversation',
     'apps.notification',
@@ -75,7 +74,6 @@ INSTALLED_APPS = [
     'apps.videolessons',
     'apps.topic',
     'apps.complaint',
-
 
 ]
 
@@ -104,7 +102,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('studysocioteam@gmail.com')
 EMAIL_HOST_PASSWORD = os.environ.get('Qazxcvbnm123')"""
 
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -124,7 +121,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'studysocio.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -142,9 +138,9 @@ DATABASES = {
         'PORT': '3306',
         'USER': 'root',
         'PASSWORD': 'user',
-'OPTIONS': {
- 'charset': 'utf8mb4'
-},
+        'OPTIONS': {
+            'charset': 'utf8mb4'
+        },
     }
 }
 
@@ -171,11 +167,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # -- FILE: pytest.ini (or tox.ini)
 # -- recommended but optional:
-#python_files = core_tests.py
+# python_files = core_tests.py
 
 LANGUAGE_CODE = 'en-us'
 
-#TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
 TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
@@ -194,15 +190,12 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-
+HASHIDS_SALT = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 # after installing reddis
-
-
-
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -213,7 +206,7 @@ CKEDITOR_CONFIGS = {
         'skin': 'moono',
         # 'skin': 'office2013',
         'toolbar_Basic': [
-            ['Source', '-', 'Bold', 'Italic','Youtube']
+            ['Source', '-', 'Bold', 'Italic', 'Youtube']
         ],
         'toolbar_YourCustomToolbarConfig': [
             {'name': 'document', 'items': ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
@@ -239,7 +232,7 @@ CKEDITOR_CONFIGS = {
             {'name': 'about', 'items': ['About']},
 
             '/',  # put this to force next toolbar on new line
-{'name': 'youtube','items': ['Youtube']},
+            {'name': 'youtube', 'items': ['Youtube']},
             {'name': 'yourcustomtools', 'items': [
                 # put the name of your editor.ui.addButton here
                 'Preview',
@@ -257,7 +250,7 @@ CKEDITOR_CONFIGS = {
         # 'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
         'tabSpaces': 4,
         'extraPlugins': ','.join([
-            'uploadimage', # the upload image feature
+            'uploadimage',  # the upload image feature
             # your extra plugins here
             'div',
             'autolink',
@@ -270,7 +263,7 @@ CKEDITOR_CONFIGS = {
             'clipboard',
             'dialog',
             'dialogui',
-            'elementspath','templates', 'uicolor','a11yhelp',
+            'elementspath', 'templates', 'uicolor', 'a11yhelp',
 
         ]),
     }

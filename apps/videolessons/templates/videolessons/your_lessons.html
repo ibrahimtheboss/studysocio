@@ -65,12 +65,12 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
               <div class="card-image">
                   <b>{{lessons.category}}</b>
  <span class="level-right">
-                       <form action="your_lessons/{{lessons.id}}/delete_lesson/" method="post">
+                       <form action="your_lessons/{{lessons.get_hashid}}/delete_lesson/" method="post">
 
        {% csrf_token %}
 <a> <button type="submit" class="button is-danger is-small">Delete</button></a>
         </form>  &nbsp;
-     <a href="your_lessons/{{lessons.id}}/edit_lesson/"> <button  class="button is-warning is-small">Edit</button></a>
+     <a href="your_lessons/{{lessons.get_hashid}}/edit_lesson/"> <button  class="button is-warning is-small">Edit</button></a>
  </span>
                 <figure class="image is-16by9" style="margin-top:2%;">
 
@@ -103,7 +103,7 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
                 <div class="content">
                   <i>Last Updated :{{lessons.modified_at|naturaltime}}</i>
 
-                  <a href="your_lessons/{{lessons.id}}/my_per_lesson/"> View ->  </a>
+                  <a href="your_lessons/{{lessons.get_hashid}}/my_per_lesson/"> View ->  </a>
                 </div>
               </div>
 

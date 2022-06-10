@@ -68,7 +68,7 @@
 
     {% for myassignment in submit_assignments_by_student %}
     {% if myassignment.assignment.id == assignemnt_details.id %}
-        <tr>{{myassignment.assignment.due_date}}
+        <tr> Due on : <b>{{myassignment.assignment.due_date}}</b>
             <td><p> {{myassignment.description}} </p></td>
             <td><p> {% if myassignment.materials %}<a href="{{myassignment.materials.url}}">View</a> {% endif %} </p></td>
             <td><p> {% if myassignment.submitted_on_time == True %}Submitted on time{% else %}submitted Late{% endif %}</p></td>
@@ -132,7 +132,7 @@
     {% endif %}
        {% empty %}
           <tr>
-            <p>Not Submitted</p>
+            <p>No Marks given</p>
         </tr>
 
 {% endfor %}
@@ -218,7 +218,7 @@
     {% endif %}
        {% empty %}
           <tr>
-            <p>Not Submitted</p>
+            <p>No marks given</p>
         </tr>
 
 {% endfor %}

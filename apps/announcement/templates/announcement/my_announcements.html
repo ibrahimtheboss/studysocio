@@ -99,7 +99,7 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
     <div class="list-item-controls">
       <div class="buttons is-right">
             {% if announcement.created_by == request.user.studysocioprofile.user %}
-        <form action="{{ announcement.id }}/delete_announcement" method="post">
+        <form action="{{ announcement.get_hashid }}/delete_announcement" method="post">
             {% csrf_token %}
         <button type="submit" class="button is-danger ">
           <span class="icon is-small">

@@ -8,6 +8,18 @@
              <div class="content is-centered ">
                  <div clas="column is-centered">
                 <h1 class=" title is-centered">Sign up</h1>
+                         {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
                  <form method="POST" action="." >
                      {% csrf_token %}
 

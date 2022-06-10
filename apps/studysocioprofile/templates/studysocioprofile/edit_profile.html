@@ -2,20 +2,67 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
+    <h1 class="title has-text-centered">Edit Profile</h1>
+    <div class="content is-centered" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(
+         '{{user.studysocioprofile.background_image.url}}');background-size: cover;">
+            <div class="container has-text-centered">
+                <div class="row ">
+	                <div class="column is-12">
+        	           <div class="content">
+	                        <div class="column is-centered">
+	                            <img src="{{ user.studysocioprofile.avatar.url }}" style=" width: 150px;
+    height: 150px;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 50%;
+        background-repeat: no-repeat;"  alt="Circle Image">
+	                        </div>
+                           <br>
+	                        <div class="content has-text-white" >
+	                            <h3 class="title has-text-white">{{ user.first_name }} {{ user.last_name }} </h3>
+								<h6 class="has-text-white">@ {{ user.username }}  <sup><i>  {{ user.studysocioprofile.designation }}</i></sup></h6>
+                                <h6 class="has-text-white">
+                                    {% if user.studysocioprofile.education_center and user.studysocioprofile.designation == 'Student' %}
+                                    Currently Studying at {{user.studysocioprofile.education_center}}{% endif %}
+                                    {% if user.studysocioprofile.education_center and user.studysocioprofile.designation == 'Teacher' %}
+                                    Currently Teaching at {{user.studysocioprofile.education_center}}{% endif %}
+
+                                </h6>
+                                <h6 class="has-text-white"><i>
+                                    {% if user.studysocioprofile.field and user.studysocioprofile.designation == 'Student' %}
+                                    Field in Studying  {{user.studysocioprofile.field}}{% endif %}
+                                    {% if user.studysocioprofile.field and user.studysocioprofile.designation == 'Teacher' %}
+                                    Field in Teaching {{user.studysocioprofile.field}}{% endif %}
+</i>
+                                </h6>
+                                <h6 class="has-text-white"><i>
+                                    {% if user.studysocioprofile.country  %}
+                                    From  {{user.studysocioprofile.country.name}}
+{% endif %}
+</i>
+                                </h6>
+	                        </div>
+	                    </div>
+    	            </div>
+                </div>
+
+            </div>
+        </div>
     <div class="columns is-centered">
       <div class="column is-6 ">
-          <h1 class="title">Edit Profile</h1>
-           {% if user.studysocioprofile.avatar %}
-            <figure class="image is-128x128">
-                <img src="{{ user.studysocioprofile.avatar.url }}">
-            </figure>
-           {% endif %}
+
           <hr>
-          <h3 class="bold">Username : @ {{ user.username }}</h3>
+          <h3 class="subtitle is-4"><b>Username : @ {{ user.username }}</b></h3>
           <hr>
-          <h3 class="bold">Designation :  {{ user.studysocioprofile.designation }}</h3>
-          <h3 class="bold">Profile Status :  {{ user.studysocioprofile.profilestatus }}</h3>
-          <h3 class="bold">Profile Status :  {{ user.studysocioprofile.gender }}</h3>
+          <div class="columns">
+              <div class="column">
+                  <h3 class="subtitle is-5"><b>Designation :  {{ user.studysocioprofile.designation }}</b></h3>
+              </div>
+              <div class="column">
+                  <h3 class="subtitle is-5 "><b>Gender :  {{ user.studysocioprofile.gender }}</b></h3>
+              </div>
+          </div>
+        <h3 class="subtitle is-5"><b>Profile Status :  {{ user.studysocioprofile.profilestatus }}</b></h3>
           <hr>
           <form method="post" enctype="multipart/form-data" action=".">
               {% csrf_token %}
@@ -24,16 +71,15 @@
     {{ form.avatar|as_crispy_field  }}
   </div>
 </div>
-              <div class="field">
-  <div class="control">
+              <div class="columns">
+  <div class="column">
     {{ form1.first_name|as_crispy_field  }}
   </div>
-</div>
-                            <div class="field">
-  <div class="control">
+                  <div class="column">
     {{ form1.last_name|as_crispy_field  }}
   </div>
 </div>
+
                             <div class="field">
   <div class="control">
     {{ form1.email|as_crispy_field  }}
@@ -50,20 +96,17 @@
     {{ form.bio|as_crispy_field }}
   </div>
 </div>
-              {% if user.studysocioprofile.designation == 'Student' %}
+
               <div class="field">
+                  {% if user.studysocioprofile.designation == 'Teacher' %}<label><span><i>(<sup>*</sup>Field in Teaching )</i></span></label>
+                   {% endif %}
+                  {% if user.studysocioprofile.designation == 'Student' %}<label><span><i>(<sup>*</sup>Field Currently Studying in )</i></span></label>
+                   {% endif %}
                   <div class="control has-icons-left has-icons-right">
-                      {{ form.field_of_study|as_crispy_field }}
+                      {{ form.field|as_crispy_field }}
                   </div>
               </div>
-              {% endif %}
-              {% if user.studysocioprofile.designation == 'Teacher' %}
-              <div class="field">
-                  <div class="control has-icons-left has-icons-right">
-                      {{ form.field_of_teaching|as_crispy_field }}
-                  </div>
-              </div>
-              {% endif %}
+
                <div class="field">
                   <div class="control has-icons-left has-icons-right">
                       {{ form.education_center|as_crispy_field }}
@@ -71,19 +114,18 @@
               </div>
 
 
-<div class="field">
-  <div class="control">
+<div class="columns">
+  <div class="column">
    {{ form.gender|as_crispy_field }}
   </div>
-</div>
-              <div class="field">
-  <div class="control">
+      <div class="column">
    {{ form.country|as_crispy_field }}
   </div>
 </div>
 
+
 <div class="field">
-    <label><span><i>(<sup>*</sup>Note if Change to Public anyone can see your profile  )</i></span></label>
+    <label><span><i>(<sup>*</sup>Note if Change to Public anyone can see your Feed  )</i></span></label>
   <div class="control">
     {{ form.profilestatus|as_crispy_field }}
   </div>
@@ -98,8 +140,104 @@
   </div>
 </div>
           </form>
-          <a href="{% url 'change_password' %}">Change password ->></a>
+          <br>
+          <div class="control level-right">
+          <a class="button is-warning " href="{% url 'change_password' %}">Change password ->></a>
+              </div>
+
+            <br>
+          <div class="control level-right">
+
+       <div id="modal-js-example" class="modal">
+  <div class="modal-background"></div>
+
+  <div class="modal-content">
+    <div class="box">
+      <div class="container">
+      <h1 class="title">Delete Study-Socio Account</h1>
+      <p class="subtitle is-5">Are you sure you want to delete your Study Socio Account Permanently  ?</p>
+          <p><small> <b><sup>**</sup>Note you will lose all your data permanently</b></small></p>
+<br>
+      <div>
+          <div class="columns is-centered is-mobile">
+              <form class="row">
+
+        <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
+</form>
+              &nbsp; &nbsp;&nbsp; &nbsp;
+         <form class="row" action="{{ request.user.username }}/studysocio_del_user/" method="post">
+
+       {% csrf_token %}
+         <button type="submit"  class="button is-danger" > Delete</button>
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirm: <input type="checkbox" id="myCheck" name="test" required>
+        </form>
+              </div>
+      </div>
+    </div>
+      <!-- Your content -->
+    </div>
+  </div>
+
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+    <div class="js-modal-trigger" data-target="modal-js-example">
+        <button class="button"> remove account</button>
+</div>
+
+</div>
+
+
+
       </div>
     </div>
 </div>
 {% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+  // Functions to open and close a modal
+  function openModal($el) {
+    $el.classList.add('is-active');
+  }
+
+  function closeModal($el) {
+    $el.classList.remove('is-active');
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  // Add a click event on buttons to open a specific modal
+  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener('click', () => {
+      openModal($target);
+    });
+  });
+
+  // Add a click event on various child elements to close the parent modal
+  (document.querySelectorAll('.modal-background, .modal-closed ,.modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
+
+    $close.addEventListener('click', () => {
+      closeModal($target);
+    });
+  });
+
+  // Add a keyboard event to close all modals
+  document.addEventListener('keydown', (event) => {
+    const e = event || window.event;
+
+    if (e.keyCode === 27) { // Escape key
+      closeAllModals();
+    }
+  });
+});
+</script>
+{%  endblock %}

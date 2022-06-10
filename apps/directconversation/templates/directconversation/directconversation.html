@@ -60,7 +60,8 @@
                           </p>
                       </figure>
                       {% endif %}
-<br>
+<br>                    <div class="column is-6
+{% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %} is-offset-5 {% endif %}" >
                        <div class="media-content">
                           <div class="content">
                               <div {% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %} class="notification is-primary is-light"{% else %} class="notification" {% endif %}>
@@ -79,6 +80,7 @@
                           </div>
                               </div>
                       </div>
+                      </div>
                       {% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %}
                       <figure class="media-right">
                           <p class="image is-64x64">
@@ -91,7 +93,7 @@
                                     {% if message.created_by == request.user.studysocioprofile.user %}
 
                             <div class="media-left">
-                                        <form action="{{user.id}}/delete/{{ message.id }}" method="post">
+                                        <form action="{{user.id}}/delete/{{ message.get_hashid }}" method="post">
 
                                        {% csrf_token %}
                                          <button type="submit" class="delete"></button>
@@ -186,5 +188,12 @@ setInterval(function(){
       $("#chat").load(document.URL + " #chat" );
 }, 5000);
 });
+</script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 4000)    // 3000 millisecond
 </script>
 {% endblock %}

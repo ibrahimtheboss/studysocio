@@ -4,6 +4,8 @@ from embed_video.fields import EmbedVideoField
 # Create your models here.
 from django.utils import timezone
 
+from apps.core.utils import h_encode
+
 
 class Announcement(models.Model):
     title = models.CharField(max_length=300)
@@ -20,3 +22,6 @@ class Announcement(models.Model):
 
     class Meta:
         ordering = ['-modified_at']
+
+    def get_hashid(self):
+        return h_encode(self.id)

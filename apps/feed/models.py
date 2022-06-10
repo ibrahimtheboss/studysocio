@@ -4,18 +4,22 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from emoji_picker.widgets import EmojiPickerTextarea
 
+from apps.core.utils import h_encode
 from apps.topic.models import Topic
 
 
 class PostFeed(models.Model):
     topic= models.ForeignKey(Topic, related_name='feedtopic', on_delete=models.CASCADE, max_length=150,blank=True, null=True)
-    body = models.CharField(max_length=1000)
+    body = models.CharField(max_length=1000,blank=True, null=True)
     feedimage = models.ImageField(upload_to='images/', blank=True, null=True)
     created_by = models.ForeignKey(User, related_name='ssuser', on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ('-created_at',)
+
+    def get_hashid(self):
+        return h_encode(self.id)
 
 
 class Like(models.Model):
@@ -30,5 +34,7 @@ class ReplyFeed(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     class Meta:
         ordering = ('created_at',)
+    def get_hashid(self):
+        return h_encode(self.id)
 
 

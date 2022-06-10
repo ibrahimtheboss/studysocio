@@ -7,6 +7,9 @@ from django.dispatch import receiver
 
 
 # Create your models here.
+from apps.core.utils import h_encode
+
+
 class FollowRequest(models.Model):
     to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.CASCADE)
     from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.CASCADE)
@@ -24,8 +27,7 @@ class StudySocioProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False)
     bio = models.CharField(max_length=250, blank=True)
-    field_of_study = models.CharField(max_length=300, default=' ', blank=True)
-    field_of_teaching = models.CharField(max_length=300, default=' ', blank=True)
+    field = models.CharField(max_length=300,  blank=True)
     education_center = models.CharField(max_length=100, blank=True)
     DESIGNATION = (
         ('Student', 'Student'),
@@ -50,14 +52,15 @@ class StudySocioProfile(models.Model):
 
     def __str__(self):
         return f'{self.user.username}'
+    def get_hashid(self):
+        return h_encode(self.id)
 
 
 
-if User != User.is_superuser:
-    @receiver(post_save, sender=User)
-    def update_studysocioprofile_signal(sender, instance, created, **kwargs):
-        if created:
-            StudySocioProfile.objects.create(user=instance)
-        instance.studysocioprofile.save()
+@receiver(post_save, sender=User)
+def update_studysocioprofile_signal(sender, instance, created, **kwargs):
+    if created:
+        StudySocioProfile.objects.create(user=instance)
+    instance.studysocioprofile.save()
 
 # User.stprofile = property(lambda u:StProfile.objects.get_or_create(user=u)[0])

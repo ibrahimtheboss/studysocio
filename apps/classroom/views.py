@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from apps.classroom.forms import ClassroomForm, ClassroomMembersForm, AssignmentGradesForm, AssignmentForm, \
-    SubmitAssignmentForm, LessonMaterialsForm
+    SubmitAssignmentForm, LessonMaterialsForm, AssignmenStatusForm, AssignmentEditForm
 from apps.classroom.models import Classroom, ClassroomMembers, Assignment, AssignmentGrades, SubmitAssignment, \
     LessonMaterials
 
@@ -24,6 +24,7 @@ def classrooms(request):
 
 @login_required
 def classroom_activity(request,classroom_id):
+    current_datetime = datetime.datetime.now()
     classroom_details = Classroom.objects.filter(id=classroom_id)
     lesson_materials = LessonMaterials.objects.filter(classroom=classroom_id)
     classroom_members = ClassroomMembers.objects.filter(classroom=classroom_id)
@@ -31,6 +32,7 @@ def classroom_activity(request,classroom_id):
     submit_assignments = SubmitAssignment.objects.filter(created_by= request.user)
 
     context = {
+        'current_datetime':current_datetime,
         'classroom_details': classroom_details,
         'lesson_materials':lesson_materials,
         'classroom_members': classroom_members,
@@ -228,19 +230,38 @@ def edit_classroom_assignment(request,classroom_id, assignment_id):
     obj = Classroom.objects.get(id=classroom_id)
     assign_obj = Assignment.objects.get(id=assignment_id,classroom=classroom_id)
     if request.method == 'POST':
-        form = AssignmentForm(request.POST, request.FILES, instance=assign_obj)
+        form = AssignmentEditForm(request.POST, request.FILES, instance=assign_obj)
 
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
-        form = AssignmentForm(instance=assign_obj)
+        form = AssignmentEditForm(instance=assign_obj)
 
     context = {
         'obj': obj,
         'form': form
     }
     return render(request, "classroom/edit_assignment.html", context)
+
+@login_required
+def edit_classroom_assignment_status(request,classroom_id, assignment_id):
+    obj = Classroom.objects.get(id=classroom_id)
+    assign_obj = Assignment.objects.get(id=assignment_id,classroom=classroom_id)
+    if request.method == 'POST':
+        form = AssignmenStatusForm(request.POST, request.FILES, instance=assign_obj)
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        form = AssignmenStatusForm(instance=assign_obj)
+
+    context = {
+        'obj': obj,
+        'form': form
+    }
+    return render(request, "classroom/edit_assignment_status.html", context)
 
 
 @login_required
@@ -383,7 +404,9 @@ def view_submit_assignment(request,classroom_id,assignment_id):
     submit_assignments_for_teacher = SubmitAssignment.objects.filter(assignment=assignment_id)
     grades_assignments_for_teacher = AssignmentGrades.objects.filter(assignment=assignment_id)
     ass_detail = Assignment.objects.filter(id=assignment_id)
+    ass_get =Assignment.objects.get(id=assignment_id)
     current_datetime = datetime.datetime.now()
+
 
     context = {
         'submit_assignments_by_student': submit_assignments_by_student,
@@ -447,6 +470,7 @@ def add_lesson_materials(request,classroom_id):
 @login_required
 def edit_lesson_materials(request, classroom_id,lesson_materials_id):
     obj = LessonMaterials.objects.get(id=lesson_materials_id)
+    obj1 = Classroom.objects.get(id=classroom_id)
     if request.method == 'POST':
         form = LessonMaterialsForm(request.POST, request.FILES, instance=obj)
 
@@ -462,6 +486,7 @@ def edit_lesson_materials(request, classroom_id,lesson_materials_id):
 
     context = {
         'obj': obj,
+        'obj1':obj1,
         'form': form
     }
     return render(request, "classroom/edit_lesson_materials.html", context)

@@ -16,7 +16,7 @@ class PostFeedForm(forms.ModelForm):
         fields = ['body','topic']
         widgets = {
             'topic': forms.Select(attrs={'name':"topic", "id":"topic", 'placeholder': 'Topic'}),
-            'body':EmojiPickerTextarea(attrs={ 'cols': 80, 'row':30,'class': 'textarea is-primary','name':"body", "id":"body", 'placeholder': 'What are you Posting?'})
+            'body':EmojiPickerTextarea(attrs={ 'cols': 80, 'default':'','row':25,'class': 'textarea is-primary','name':"body", "id":"body", 'placeholder': 'What are you Posting?'})
         }
 
 

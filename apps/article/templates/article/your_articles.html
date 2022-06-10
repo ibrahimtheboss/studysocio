@@ -64,12 +64,12 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
               <div class="card-image">
                   <b>{{articles.category}}</b>
  <span class="level-right">
-                       <form action="{{articles.id}}/delete_articles/" method="post">
+                       <form action="{{articles.get_hashid}}/delete_articles/" method="post">
 
        {% csrf_token %}
 <a> <button type="submit" class="button is-danger is-small">Delete</button></a>
         </form>  &nbsp;
-     <a href="{{articles.id}}/edit_article/"> <button  class="button is-warning is-small">Edit</button></a>
+     <a href="{{articles.get_hashid}}/edit_article/"> <button  class="button is-warning is-small">Edit</button></a>
  </span>
                 <figure class="image is-16by9">
 
@@ -107,7 +107,7 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
                 <div class="content">
                   <i>Last Updated :{{articles.modified_at|naturaltime}}</i>
 
-                  <a href="{{articles.id}}/my_per_article/"> View ->  </a>
+                  <a href="{{articles.get_hashid}}/my_per_article/"> View ->  </a>
                 </div>
               </div>
 

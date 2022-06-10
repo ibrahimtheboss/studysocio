@@ -161,9 +161,9 @@ margin: 0 auto;}
  {% if request.user.studysocioprofile.designation == 'Teacher' %}
     {% if lesson.created_by == request.user.studysocioprofile.user %}
 <button class="card-header-icon" aria-label="more options">
-   <a href="{{lesson.id}}/edit_lesson_materials">
-       <button type="submit" class="button is-warning is-small">Edit</button></a>
-      <form action="{{lesson.id }}/delete_lesson_materials/" method="post">
+   <a href="{{lesson.get_hashid}}/edit_lesson_materials">
+       <button type="submit" class="button is-warning is-small">Edit</button></a>&nbsp;
+      <form action="{{lesson.get_hashid }}/delete_lesson_materials/" method="post">
 
        {% csrf_token %}
             <button type="submit" class="button is-danger is-small">Delete</button></a>
@@ -211,10 +211,11 @@ margin: 0 auto;}
  {% if request.user.studysocioprofile.designation == 'Teacher' %}
     {% if assignment.created_by == request.user.studysocioprofile.user %}
 <button class="card-header-icon" aria-label="more options">
-
-   <a href="{{assignment.id}}/edit_classroom_assignment">
-       <button type="submit" class="button is-warning is-small">Edit</button></a>
-      <form action="{{assignment.id }}/delete_classroom_assignment/" method="post">
+<a href="{{assignment.get_hashid}}/edit_classroom_assignment_status">
+       <button type="submit" class="button is-info is-small">Edit Status</button></a>
+   <a href="{{assignment.get_hashid}}/edit_classroom_assignment">&nbsp;
+       <button type="submit" class="button is-warning is-small">Edit</button></a>&nbsp;
+      <form action="{{assignment.get_hashid }}/delete_classroom_assignment/" method="post">
 
        {% csrf_token %}
             <button type="submit" class="button is-danger is-small">Delete</button></a>
@@ -233,6 +234,9 @@ margin: 0 auto;}
         </p>
         <p> <b>Due Date on : {{ assignment.due_date }}</b>
         </p>
+        <p> <b>Assignment Status : {{ assignment.status }}</b>
+            {{current_datetime}}
+        </p>
       <br>
 
         <i class="level-left"> created @ {{ assignment.created_at|naturaltime }}</i>
@@ -240,18 +244,18 @@ margin: 0 auto;}
          {% if request.user.studysocioprofile.designation == 'Teacher' %}
     {% if assignment.created_by == request.user.studysocioprofile.user %}
               <button class="card-header-icon" aria-label="more options">
-          <a href="{{assignment.id}}/add_assignment_grades/">
+          <a href="{{assignment.get_hashid}}/add_assignment_grades/">
          <button class="button" >+ Grades</button></a>
                    {% endif %}
       {% endif %}
 
 
 
-                  <a href="{{assignment.id}}/view_submit_assignment/">
+                  <a href="{{assignment.get_hashid}}/view_submit_assignment/">
          <button class="button" >+ View Submit Assignment</button></a>
           </button>
         {% if request.user.studysocioprofile.designation == 'Student' %}
-    <a href="{{assignment.id}}/submit_assignment/">
+    <a href="{{assignment.get_hashid}}/submit_assignment/">
          <button class="button" >+ Submit Assignment</button></a>
           </button>
 

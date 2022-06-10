@@ -33,7 +33,7 @@ def create_group(request):
             # GroupConversationMembers.objects.create(users=request.user,groupconversation=request.groupconversation__set.id)
 
             # groupconversation.users.set(user)
-
+            messages.success(request, 'Successfully created Group !!')
             return redirect('create_group')
     else:
         form = GroupConversationForm()
@@ -47,6 +47,7 @@ def edit_group(request, id):
 
         if form.is_valid():
             form.save()
+            messages.success(request, 'Successfully Edited Group details !!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = GroupConversationForm(instance=obj)
@@ -72,9 +73,7 @@ def add_member(request,group_id):
 
                 group.save()
                 messages.success(request, 'sucessfully Added user to group.')
-                return render(request, 'groupconversation/add_members.html',
-                              {'form': form,
-                               })
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
             except IntegrityError:
                 messages.warning(request, 'This user already exists.')
@@ -132,12 +131,19 @@ def groupconversation(request, group_id):
             if message.content != "" and message.image != "":
                 print(message.image)
                 y = imagepredict(message.image)
-                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float(
-                        "{:.2f}".format((y[0][0] * 100))) > 85:
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85:
                     print("The model has predicted the image is MEME" +
                           ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
-                    messages.warning(request, 'Warning the image uploaded was classified as a prohibited Image')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Meme image which is '
+                                              'a prohibited Image')
                     return redirect('groupconversation', group_id)
+                elif argmax(y) == 1 and float("{:.2f}".format((y[0][1] * 100))) > 85:
+                    print("The model has predicted the image is Selfie" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][1] * 100)) + '%')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Selfie image which is a '
+                                              'prohibited Image')
+                    return redirect('groupconversation', group_id)
+
 
                 else:
                     print("good image")
@@ -159,11 +165,17 @@ def groupconversation(request, group_id):
             elif message.content == "" and message.image != "":
                 print(message.image)
                 y = imagepredict(message.image)
-                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float(
-                        "{:.2f}".format((y[0][0] * 100))) > 85:
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85:
                     print("The model has predicted the image is MEME" +
                           ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
-                    messages.warning(request, ' Warning the image uploaded was classified as a prohibited Image')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Meme image which is '
+                                              'a prohibited Image')
+                    return redirect('groupconversation', group_id)
+                elif argmax(y) == 1 and float("{:.2f}".format((y[0][1] * 100))) > 85:
+                    print("The model has predicted the image is Selfie" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][1] * 100)) + '%')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Selfie image which is a '
+                                              'prohibited Image')
                     return redirect('groupconversation', group_id)
 
                 else:
@@ -226,6 +238,7 @@ def deletegroupmessage(request, group_id, message_id):
         if request.user.studysocioprofile.user == message.created_by:
             message.delete()
             # redirect to the feed page
+            messages.success(request, 'Successfully Deleted Message !!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             # return redirect('directconversation',user)
 
@@ -264,6 +277,7 @@ def removegroupuser(request,group_id, user_id):
         user.delete()
         message.delete()
         # redirect to the feed page
+        messages.success(request, 'Successfully removed user !!')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         # no need for an `else` here. If it's a GET request, just continue
@@ -287,6 +301,7 @@ def deletegroup(request,group_id):
         group.delete()
         message.delete()
         # redirect to the feed page
+        messages.success(request, 'Successfully Deleted Group !!')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         # no need for an `else` here. If it's a GET request, just continue

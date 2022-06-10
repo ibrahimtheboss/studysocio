@@ -78,6 +78,8 @@
                       </figure>
                       {% endif %}
 <br>
+                       <div class="column is-6
+{% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %} is-offset-5 {% endif %}" >
                        <div class="media-content">
                           <div class="content">
                               <div {% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %} class="notification is-primary is-light"{% else %} class="notification" {% endif %}>
@@ -96,6 +98,7 @@
                           </div>
                               </div>
                       </div>
+                       </div>
                       {% if message.created_by.studysocioprofile.user == request.user.studysocioprofile.user  %}
                       <figure class="media-right">
                           <p class="image is-64x64">
@@ -107,7 +110,7 @@
                       {% endif %}
                                     {% if message.created_by == request.user.studysocioprofile.user %}
                             <div class="media-left">
-                                        <form action="{{message.groupconversation.id }}/delete/{{ message.id }}" method="post">
+                                        <form action="{{message.groupconversation.get_hashid }}/delete/{{ message.get_hashid }}" method="post">
 
                                        {% csrf_token %}
                                          <button type="submit" class="delete"></button>

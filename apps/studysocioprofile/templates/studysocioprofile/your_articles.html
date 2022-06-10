@@ -36,56 +36,56 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
 
  <div class="container">
       <div class="section">
-        <div id="app" class="row columns is-multiline  ">
-            {% for articles in page_obj.object_list %}
-            <a href="{% url 'per_article' articles.category.id  articles.id %}">
+          <div id="app" class="row columns is-multiline  ">
+              {% for articles in page_obj.object_list %}
+              <a href="{% url 'per_article' articles.category.id  articles.id %}">
 
-          <div v-for="card in cardData" key="card.id" class="column is-3">
-            <div class="card large is-shady">
-              <div class="card-image">
-                <figure class="image is-16by9">
-                    {% if articles.titleimage  %}
-                <img  src="{{ articles.titleimage.url }}"
-                      style=" max-width:640px; max-height:650px;" alt="Placeholder image"
-                      class="modal-button" data-target="modal-image2">
-                {% endif %}
-                </figure>
-              </div>
-              <div class="card-content">
-                <div class="media">
-                  <div class="media-left">
-                    <figure class="image is-48x48">
-                      {% if articles.created_by.studysocioprofile.avatar %}
-                <img class="avatar" src="{{ articles.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
+                  <div v-for="card in cardData" key="card.id" class="column is-3">
+                      <div class="card large is-shady">
+                          <div class="card-image">
+                              <figure class="image is-16by9">
+                                  {% if articles.titleimage  %}
+                                  <img  src="{{ articles.titleimage.url }}"
+                                        style=" max-width:640px; max-height:650px;" alt="Placeholder image"
+                                        class="modal-button" data-target="modal-image2">
+                                  {% endif %}
+                              </figure>
+                          </div>
+                          <div class="card-content">
+                              <div class="media">
+                                  <div class="media-left">
+                                      <figure class="image is-48x48">
+                                          {% if articles.created_by.studysocioprofile.avatar %}
+                                          <img class="avatar" src="{{ articles.created_by.studysocioprofile.avatar.url }}"  style=" vertical-align: middle;
   border-radius: 50%; height:50px;width:65px;">
 
-                              {% endif %}
-                    </figure>
-                  </div>
-                  <div class="media-content">
-                    <p class="title is-4 no-padding">{{articles.title}}</p>by:{{articles.created_by.first_name}} {{articles.created_by.last_name}}
-                    <p>
+                                          {% endif %}
+                                      </figure>
+                                  </div>
+                                  <div class="media-content">
+                                      <p class="title is-4 no-padding">{{articles.title}}</p>by:{{articles.created_by.first_name}} {{articles.created_by.last_name}}
+                                      <p>
                       <span class="title is-6">
                            @ <a href="{% url 'studysocioprofile' articles.created_by.username %}">
                           {{articles.created_by.username}} </a> ({{articles.created_by.studysocioprofile.designation}})</span> </p>
-                    <p class="media-content">{{articles.description|truncatechars:50 }}</p>
+                                      <p class="media-content">{{articles.description|truncatechars:50 }}</p>
+                                  </div>
+                              </div>
+                              <div class="content">
+                                  <p class="media-content">{{articles.category.name }}</p>
+                                  <i>Last Updated :{{articles.modified_at|naturaltime}}</i>
+                                  <div class="background-icon"><span class="icon-twitter"></span></div>
+                              </div>
+                          </div>
+                      </div>
                   </div>
-                </div>
-                <div class="content">
-                    <p class="media-content">{{articles.category.name }}</p>
-                  <i>Last Updated :{{articles.modified_at|naturaltime}}</i>
-                  <div class="background-icon"><span class="icon-twitter"></span></div>
-                </div>
-              </div>
-            </div>
+              </a>
+              {% empty %}
+              <p>No Articles created</p>
+              {% endfor %}
           </div>
-            </a>
-             {% empty %}
-          <p>No Articles created</p>
-            {% endfor %}
-        </div>
       </div>
-    </div>
+ </div>
 
       </div>
     </div>

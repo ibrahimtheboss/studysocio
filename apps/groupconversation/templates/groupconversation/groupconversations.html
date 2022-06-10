@@ -4,7 +4,24 @@
 <div class="container">
     <div class="columns">
       <div class="column is-12">
-          <h1 class="title">Conversations</h1>
+          <h1 class="title">Group Conversations</h1>
+                    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
          <span><a href="{% url 'create_group'%}">
               <button class="button is-danger is-rounded is-small" >Create a group</button></a></span>
 
@@ -37,7 +54,7 @@
   </div>
   <div class="media-right">
        {% if groupconversation.groupconversation.created_by == request.user.studysocioprofile.user %}
-        <form action="deletegroup/{{groupconversation.groupconversation.id}}" method="post">
+        <form action="deletegroup/{{groupconversation.groupconversation.get_hashid}}" method="post">
 
        {% csrf_token %}
          <button type="submit" class="delete" >Delete</button>
@@ -59,4 +76,14 @@
       </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
 {% endblock %}

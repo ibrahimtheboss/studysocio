@@ -8,6 +8,7 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 
+from apps.core.utils import h_encode
 from apps.topic.models import Topic
 
 
@@ -19,6 +20,8 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    def get_hashid(self):
+        return h_encode(self.id)
 
 class Article(models.Model):
     title = models.CharField(max_length=300)
@@ -44,6 +47,10 @@ class Article(models.Model):
 
     class Meta:
         ordering = ['-modified_at']
+
+    def get_hashid(self):
+        return h_encode(self.id)
+
 
 class Like(models.Model):
     Article = models.ForeignKey(Article, related_name='article_likes', on_delete=models.CASCADE)

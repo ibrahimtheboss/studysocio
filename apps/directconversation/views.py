@@ -62,12 +62,19 @@ def directconversation(request, user_id):
             if message.content != "" and message.image != "":
                 print(message.image)
                 y = imagepredict(message.image)
-                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float(
-                        "{:.2f}".format((y[0][0] * 100))) > 85:
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85:
                     print("The model has predicted the image is MEME" +
                           ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
-                    messages.warning(request, 'Warning the image uploaded was classified as a prohibited Image')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Meme image which is '
+                                              'a prohibited Image')
                     return redirect('directconversation', user_id)
+                elif argmax(y) == 1 and float("{:.2f}".format((y[0][1] * 100))) > 85:
+                    print("The model has predicted the image is Selfie" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][1] * 100)) + '%')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Selfie image which is a '
+                                              'prohibited Image')
+                    return redirect('directconversation', user_id)
+
 
                 else:
                     print("good image")
@@ -92,11 +99,17 @@ def directconversation(request, user_id):
             elif message.content == "" and message.image != "":
                 print(message.image)
                 y = imagepredict(message.image)
-                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float(
-                        "{:.2f}".format((y[0][0] * 100))) > 85:
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85:
                     print("The model has predicted the image is MEME" +
                           ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
-                    messages.warning(request, ' Warning the image uploaded was classified as a prohibited Image')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Meme image which is '
+                                              'a prohibited Image')
+                    return redirect('directconversation', user_id)
+                elif argmax(y) == 1 and float("{:.2f}".format((y[0][1] * 100))) > 85:
+                    print("The model has predicted the image is Selfie" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][1] * 100)) + '%')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Selfie image which is a '
+                                              'prohibited Image')
                     return redirect('directconversation', user_id)
 
                 else:
@@ -150,6 +163,7 @@ def deletemessage(request,user_id, message_id):
         if request.user.studysocioprofile.user == message.created_by:
             message.delete()
             # redirect to the feed page
+            messages.success(request, 'Successfully Deleted Message !!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             #return redirect('directconversation',user)
 
@@ -171,6 +185,7 @@ def deletedirectconversations(request, user_id,directconversation_id):
         if request.user.studysocioprofile.user == deletemessage:
             message.all().delete()
             # redirect to the feed page
+            messages.success(request, 'Successfully Deleted Conversation !!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             # return redirect('directconversation',user)
 

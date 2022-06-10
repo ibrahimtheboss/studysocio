@@ -127,7 +127,7 @@ Your browser does not support the video tag.
   <div class="media-right ">
 
       {% if announcement.created_by == request.user.studysocioprofile.user %}
-        <form action="delete/{{ announcement.id }}" method="post">
+        <form action="{{ request.user.username }}/my_announcements/{{ announcement.get_hashid }}/delete_announcement" method="post">
 
        {% csrf_token %}
          <button type="submit" class="delete is-warning" ></button>

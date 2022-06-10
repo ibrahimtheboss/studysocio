@@ -1,13 +1,10 @@
 {% extends 'core/base.html'  %}
 {% load humanize %}
 {% block upperscript %}
-<style>
 
 
-
-
-</style>
 {% endblock %}
+
 {% block content %}
 <br>
 	<div class="content is-centered" style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(
@@ -36,10 +33,16 @@
 
                                 </h6>
                                 <h6 class="has-text-white"><i>
-                                    {% if user.studysocioprofile.field_of_study and user.studysocioprofile.designation == 'Student' %}
-                                    Field in   {{user.studysocioprofile.field_of_study}}{% endif %}
-                                    {% if user.studysocioprofile.field_of_teaching and user.studysocioprofile.designation == 'Teacher' %}
-                                    Field in {{user.studysocioprofile.field_of_teaching}}{% endif %}
+                                    {% if user.studysocioprofile.field is not None and user.studysocioprofile.designation == 'Student' %}
+                                    Field in Studying  {{user.studysocioprofile.field}}{% endif %}
+                                    {% if user.studysocioprofile.field and user.studysocioprofile.designation == 'Teacher' %}
+                                    Field in Teaching {{user.studysocioprofile.field}}{% endif %}
+</i>
+                                </h6>
+                                <h6 class="has-text-white"><i>
+                                    {% if user.studysocioprofile.country  %}
+                                    From  {{user.studysocioprofile.country.name}}
+{% endif %}
 </i>
                                 </h6>
                                  {% if user != request.user %}
@@ -247,7 +250,7 @@
         <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
 </form>
               &nbsp; &nbsp;&nbsp; &nbsp;
-         <form class="row" action="studysocioprofile/{{ k.id }}/deletereplyfeed_profile/" method="post">
+         <form class="row" action="studysocioprofile/{{ k.get_hashid }}/deletereplyfeed_profile/" method="post">
 
        {% csrf_token %}
          <button type="submit"  class="button is-danger" > Delete</button>
@@ -321,7 +324,7 @@
         <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
 </form>
               &nbsp; &nbsp;&nbsp; &nbsp;
-         <form class="row" action="studysocioprofile/{{ postfeed.id }}/deletefeed_profile/" method="post">
+         <form class="row" action="studysocioprofile/{{ postfeed.get_hashid }}/deletefeed_profile/" method="post">
 
        {% csrf_token %}
          <button type="submit"  class="button is-danger" > Delete</button>

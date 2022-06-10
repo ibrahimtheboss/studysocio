@@ -5,7 +5,24 @@
     <div class="columns">
       <div class="column is-12">
           <span><a href="{% url 'groupconversation' obj.id %}">Go back</a></span>
-          <h1 class="title">Members List </h1>
+          <h1 class="title">Group Members List </h1>
+                    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
 
           <div class="conversations-list">
               {% for members in groupconversationmembers %}
@@ -32,10 +49,16 @@
   </div>
   <div class="media-right">
        {% if members.users == request.user.studysocioprofile.user %}
-        <form action="listofgroupmembers/{{members.id}}/remove/" method="post">
+        <form action="listofgroupmembers/{{members.get_hashid}}/remove/" method="post">
 
        {% csrf_token %}
          <button type="submit" class="button is-danger is-rounded is-small" >leave</button>
+        </form>
+      {% elif members.groupconversation.created_by == request.user.studysocioprofile.user %}
+        <form action="listofgroupmembers/{{members.get_hashid}}/remove/" method="post">
+
+       {% csrf_token %}
+         <button type="submit" class="button is-danger is-rounded is-small" >remove</button>
         </form>
        {% endif %}
   </div>
@@ -55,4 +78,14 @@
       </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
 {% endblock %}

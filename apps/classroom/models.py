@@ -13,6 +13,8 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.timezone import utc
 
+from apps.core.utils import h_encode
+
 
 class Classroom(models.Model):
     name = models.CharField(max_length=300)
@@ -27,6 +29,8 @@ class Classroom(models.Model):
 
     class Meta:
         ordering = ['-modified_at']
+    def get_hashid(self):
+        return h_encode(self.id)
 
 
 class ClassroomMembers(models.Model):
@@ -39,6 +43,9 @@ class ClassroomMembers(models.Model):
 
     class Meta:
         unique_together = ["users", "classroom"]
+
+    def get_hashid(self):
+        return h_encode(self.id)
 
 
 @receiver(post_save, sender=Classroom)
@@ -85,6 +92,8 @@ class Assignment(models.Model):
 
     class Meta:
         ordering = ['-modified_at']
+    def get_hashid(self):
+        return h_encode(self.id)
 
 
 class LessonMaterials(models.Model):
@@ -101,6 +110,8 @@ class LessonMaterials(models.Model):
 
     class Meta:
         ordering = ['-modified_at']
+    def get_hashid(self):
+        return h_encode(self.id)
 
 
 class SubmitAssignment(models.Model):
@@ -118,6 +129,8 @@ class SubmitAssignment(models.Model):
     class Meta:
         ordering = ['-modified_at']
         unique_together = ["assignment", "created_by"]
+    def get_hashid(self):
+        return h_encode(self.id)
 
 
 class AssignmentGrades(models.Model):
@@ -136,3 +149,6 @@ class AssignmentGrades(models.Model):
     class Meta:
         ordering = ['-modified_at']
         unique_together = ["assignment",'user', "created_by"]
+
+    def get_hashid(self):
+        return h_encode(self.id)

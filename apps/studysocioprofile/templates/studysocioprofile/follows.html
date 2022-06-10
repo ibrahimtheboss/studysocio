@@ -4,9 +4,9 @@
 <div class="container">
     <div class="columns">
       <div class="column is-12">
-          <h1 class="title">Follows - {{ user.username }}</h1>
+          <h1 class="title">Follows of - {{ user.username }}</h1>
 
-          <p>Num: {{ user.studysocioprofile.follows.count }}</p>
+          <p>Number of follows: {{ user.studysocioprofile.follows.count }}</p>
       </div>
     </div>
     {% if request.user == user %}

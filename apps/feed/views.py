@@ -3,10 +3,13 @@ import re  # regular expressions
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
+from infscroll.utils import get_pagination
+from infscroll.views import more_items
 from numpy import argmax
 
 from .forms import PostFeedForm
@@ -26,10 +29,28 @@ from better_profanity import profanity
 if __name__ == "__main__":
     profanity.load_censor_words()
 
-
 """lines = []
 with open('static/words/bad_words_all.txt') as f:
     lines = f.readlines()"""
+
+
+def more(request):
+    # This is the list that will be paginated.
+    userids = [request.user.id]
+
+    for poster in request.user.studysocioprofile.follows.all():
+        userids.append(poster.user.id)
+
+    ssuser = PostFeed.objects.filter(created_by_id__in=userids)
+
+    context = {
+        'ssuser': ssuser,
+
+    }
+    return more_items(request, context,
+                      # (optional) your custom template
+                      template='feed.html')
+
 
 @login_required
 def feed(request):
@@ -40,15 +61,19 @@ def feed(request):
             userids.append(poster.user.id)
 
         ssuser = PostFeed.objects.filter(created_by_id__in=userids)
-        for k in ssuser:
-            replypost = ReplyFeed.objects.all()
+
         form = PostFeedForm(request.POST)
+
+        paginated = get_pagination(request, ssuser)
+        # we must declare the url where it will load more stuff
+        # update with paginated info
+
         context = {
             'ssuser': ssuser,
-            'replypost': replypost,
-            'form':form,
+            'form': form,
+            'more_posts_url': reverse('more'),
         }
-
+        context.update(paginated)
         for postfeed in ssuser:
             likes = postfeed.likes.filter(created_by_id=request.user.id)
 
@@ -57,13 +82,13 @@ def feed(request):
             else:
                 postfeed.liked = False
 
-        if request.method == 'POST' and not None :
+        if request.method == 'POST' and not None:
 
-            if 'body' in request.POST :
+            if 'body' in request.POST:
                 body = request.POST['body']
             else:
                 body = ''
-            if 'topic' in request.POST :
+            if 'topic' in request.POST:
                 topic = request.POST['topic']
             else:
                 topic = ''
@@ -72,17 +97,25 @@ def feed(request):
             else:
                 feedimage = ''
             if topic == "":
-                postfeed = PostFeed( body=body, feedimage=feedimage,created_by=User.objects.get(pk=request.user.id))
+                postfeed = PostFeed(body=body, feedimage=feedimage, created_by=User.objects.get(pk=request.user.id))
             else:
-                postfeed = PostFeed(topic=Topic.objects.get(pk=topic), body=body, feedimage=feedimage,created_by=User.objects.get(pk=request.user.id))
+                postfeed = PostFeed(topic=Topic.objects.get(pk=topic), body=body, feedimage=feedimage,
+                                    created_by=User.objects.get(pk=request.user.id))
 
-            if postfeed.body != "" and postfeed.feedimage !="":
+            if postfeed.body != "" and postfeed.feedimage != "":
                 print(postfeed.feedimage)
                 y = imagepredict(postfeed.feedimage)
-                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float("{:.2f}".format((y[0][0] * 100))) > 85:
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 :
                     print("The model has predicted the image is MEME" +
                           ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
-                    messages.warning(request, 'Warning the image uploaded was classified as a prohibited Image')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Meme image which is '
+                                              'a prohibited Image')
+                    return redirect('feed')
+                elif argmax(y) == 1 and float("{:.2f}".format((y[0][1] * 100))) > 85:
+                    print("The model has predicted the image is Selfie" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][1] * 100)) + '%')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Selfie image which is a '
+                                              'prohibited Image')
                     return redirect('feed')
 
                 else:
@@ -103,13 +136,20 @@ def feed(request):
                             create_notification(request, User.objects.get(username=result), 'mention')
 
                     return redirect('feed')
-            elif postfeed.body == "" and postfeed.feedimage !="":
+            elif postfeed.body == "" and postfeed.feedimage != "":
                 print(postfeed.feedimage)
                 y = imagepredict(postfeed.feedimage)
-                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85 or argmax(y) == 1 and float("{:.2f}".format((y[0][0] * 100))) > 85:
-                    print("The model has predicted the image is MEME" +
+                if argmax(y) == 0 and float("{:.2f}".format((y[0][0] * 100))) > 85:
+                    print("The model has predicted the image is a MEME" +
                           ' with a Confidence of ' + "{:.2f}".format((y[0][0] * 100)) + '%')
-                    messages.warning(request, ' Warning the image uploaded was classified as a prohibited Image')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Meme image which is '
+                                              'a prohibited Image')
+                    return redirect('feed')
+                elif argmax(y) == 1 and float("{:.2f}".format((y[0][1] * 100))) > 85:
+                    print("The model has predicted the image is a Selfie" +
+                          ' with a Confidence of ' + "{:.2f}".format((y[0][1] * 100)) + '%')
+                    messages.warning(request, 'Warning the image uploaded was classified as a Selfie image which is a '
+                                              'prohibited Image')
                     return redirect('feed')
 
                 else:
@@ -161,7 +201,7 @@ def deletefeed(request, id):
         if request.user.studysocioprofile.user == postfeed.created_by:
             postfeed.delete()
             # redirect to the feed page
-            messages.success(request, 'Successfully Deleted!!')
+            messages.success(request, 'Successfully Deleted Feed !!')
             return redirect('feed')
 
         # no need for an `else` here. If it's a GET request, just continue
@@ -196,6 +236,7 @@ def replypost(request):
 
     return render(request, 'feed/feed.html')
 
+
 @login_required
 def deletereplyfeed(request, id):
     replyfeed = ReplyFeed.objects.get(id=id)  # we need this for both GET and POST
@@ -211,8 +252,6 @@ def deletereplyfeed(request, id):
         # no need for an `else` here. If it's a GET request, just continue
 
     return render(request, 'feed/feed.html', {'replyfeed': replyfeed})
-
-
 
 
 @login_required
@@ -250,5 +289,3 @@ def search(request):
     }
 
     return render(request, 'feed/search.html', context)
-
-

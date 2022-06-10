@@ -4,6 +4,8 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 
+from apps.core.utils import h_encode
+
 
 class Complaint(models.Model):
     title = models.CharField(max_length=300)
@@ -16,6 +18,8 @@ class Complaint(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+    def get_hashid(self):
+        return h_encode(self.id)
 
 class Feedback(models.Model):
     complaint = models.ForeignKey(Complaint, related_name='feedbackto', on_delete=models.CASCADE)
@@ -28,3 +32,6 @@ class Feedback(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def get_hashid(self):
+        return h_encode(self.id)

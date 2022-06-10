@@ -37,6 +37,22 @@
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    {% if message.tags == 'warning' %}
+    <div  class= "notification is-danger" id="msg">
+   {{ message }}
+    </div>
+     {% else %}
+    <div  class="notification is-success" id="msg">
+     {{ message }}
+    </div>
+   {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
 {% if request.user.is_authenticated %}
  <section class="hero is-medium has-text-centered">
     <div class="hero-body">
@@ -129,4 +145,11 @@
       once: true
     });
   </script>
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 3000)    // 3000 millisecond
+</script>
 {% endblock %}

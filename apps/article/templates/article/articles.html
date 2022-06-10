@@ -70,7 +70,7 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
       <div class="section">
         <div id="app" class="row columns is-multiline  ">
             {% for articles in articles %}
-            <a href="{{articles.id }}/per_article/">
+            <a href="{{articles.get_hashid }}/per_article/">
 
           <div v-for="card in cardData" key="card.id" class="column is-3">
             <div class="card large is-shady">
@@ -125,7 +125,7 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
       <div class="section">
         <div id="app" class="row columns is-multiline  ">
             {% for articles in page_obj.object_list %}
-            <a href="{{articles.id }}/per_article/">
+            <a href="{{articles.get_hashid }}/per_article/">
 
           <div v-for="card in cardData" key="card.id" class="column is-3">
             <div class="card large is-shady">
@@ -212,6 +212,7 @@ is-offset-4 is-centered" >
     </nav>
 </div>
 {% endblock %}
+
 {% block script %}
 <script>
     if ( window.history.replaceState ) {

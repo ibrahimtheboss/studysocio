@@ -19,6 +19,7 @@
 
   <div class="container" >
       It is {% now "jS F Y H:i" %}
+      <p class="title has-text-centered">My Feed</p>
     <div class="columns">
       <div class="column is-half is-offset-one-quarter" >
           {% if messages %}
@@ -93,6 +94,7 @@
       </div>
 
     </div>
+     {% load infinite_scroll %}
       <div id="feedapp">
 {% for postfeed in ssuser %}
       <div class="columns body-columns">
@@ -189,7 +191,7 @@
 
           {{ k.replybody }}
 
-        <span class="level-right"> <a>Like</a> &nbsp; -<small>commented</small><small>&nbsp;  <i>{{ k.created_at|naturaltime }}</i></small></span>
+        <span class="level-right">  &nbsp; -<small>commented</small><small>&nbsp;  <i>{{ k.created_at|naturaltime }}</i></small></span>
       </p>
     </div>
 
@@ -212,7 +214,7 @@
         <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
 </form>
               &nbsp; &nbsp;&nbsp; &nbsp;
-         <form class="row" action="replypost/{{ k.id }}/deletereplyfeed/" method="post">
+         <form class="row" action="replypost/{{ k.get_hashid }}/deletereplyfeed/" method="post">
 
        {% csrf_token %}
          <button type="submit"  class="button is-danger" > Delete</button>
@@ -289,7 +291,7 @@
         <a class="modal-closed"> <button type="button" class="button close is-warning"  aria-label="close" >Cancel</button></a>
 </form>
               &nbsp; &nbsp;&nbsp; &nbsp;
-         <form class="row" action="delete/{{ postfeed.id }}" method="post">
+         <form class="row" action="delete/{{ postfeed.get_hashid }}" method="post">
 
        {% csrf_token %}
          <button type="submit"  class="button is-danger" > Delete</button>
@@ -330,7 +332,7 @@
 
       {% endfor %}
 </div>
-
+{% infinite_scroll_tags %}
 
   </div>
 
@@ -433,19 +435,7 @@
 
 
 
-   <script>
 
-      $(document).ready(function() {
-      {% for postfeed in ssuser %}
-          // Display alert message after toggle paragraphs
-          $("#DIV{{postfeed.id}}").click(function() {
-              $("#{{postfeed.id}}r").toggle(500, function() {
-
-                });
-            });{% endfor %}
-        });
-
-    </script>
 
 
 
@@ -507,6 +497,19 @@ function divide() {
         }
 
 </script>
+ <script>
+
+      $(document).ready(function() {
+      {% for postfeed in ssuser %}
+          // Display alert message after toggle paragraphs
+          $("#DIV{{postfeed.id}}").click(function() {
+              $("#{{postfeed.id}}r").toggle(500, function() {
+
+                });
+            });{% endfor %}
+        });
+
+    </script>
 <script>
     setTimeout(function(){
         if ($('#msg').length > 0) {
@@ -524,25 +527,8 @@ function divide() {
             localStorage.setItem('scrollpos', window.scrollY);
         };
     </script>
-<script>
-//$.ajax({
-//  url: '{%  url 'feed' %}',
-// success: function(data) {
-//  $("#here").load(document.URL + " #here" );
-//  }
-//});
-</script>
- <script>
- {% if messages %}
-    {% for message in messages %}
 
-   function divide() {
-      alert("{{ message }}");
-   }
 
-    {% endfor %}
-{% endif %}
-</script>
 <script>
   const fileInput = document.querySelector('#file-js-example input[type=file]');
   fileInput.onchange = () => {
@@ -552,13 +538,7 @@ function divide() {
     }
   }
 </script>
-     <script>
-//$(document).ready(function(){
-//setInterval(function(){
-//      $("#here").load(document.URL + " #here" );
-//}, 3000);
-//});
-</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
   // Functions to open and close a modal
