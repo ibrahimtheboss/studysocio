@@ -58,7 +58,7 @@ def create_classroom(request):
 
 
             classroom.save()
-
+            messages.success(request, 'successfully created classroom.')
             return redirect('create_classroom')
     else:
         form = ClassroomForm()
@@ -72,6 +72,7 @@ def edit_classroom(request, classroom_id):
 
         if form.is_valid():
             form.save()
+            messages.success(request, 'successfully edited Classroom.')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = ClassroomForm(instance=obj)
@@ -94,7 +95,7 @@ def delete_classroom(request,classroom_id):
     if request.method == 'POST':
         classroom_members.delete()
         classroom.delete()
-
+        messages.success(request, 'successfully deleted classroom.')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     return render(request, 'classroom/classroom.html', context)
@@ -234,6 +235,7 @@ def edit_classroom_assignment(request,classroom_id, assignment_id):
 
         if form.is_valid():
             form.save()
+            messages.success(request, 'successfully edited Assignment.')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = AssignmentEditForm(instance=assign_obj)
@@ -253,6 +255,7 @@ def edit_classroom_assignment_status(request,classroom_id, assignment_id):
 
         if form.is_valid():
             form.save()
+            messages.success(request, 'successfully changes assignment status.')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = AssignmenStatusForm(instance=assign_obj)
@@ -344,6 +347,7 @@ def edit_assignment_grades(request,classroom_id, assignment_id,assignment_grade_
 
         if form.is_valid():
             form.save()
+            messages.success(request, 'successfully edited grades')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         form = AssignmentGradesForm(classroom=classroom_id,user=request.user,instance=assign_obj)
@@ -445,6 +449,7 @@ def add_lesson_materials(request,classroom_id):
     #User.objects.filter(id__in=ClassroomMembers.objects.filter(users__classroom__created_by__in=self.user))
     """k = ClassroomMembers.objects.filter(classroom=15)
     k= User.objects.filter(classroommembers__id__in=k)"""
+    obj = Classroom.objects.get(id=classroom_id)
     if request.method == 'POST':
         form = LessonMaterialsForm(request.POST, request.FILES)
 
@@ -464,8 +469,13 @@ def add_lesson_materials(request,classroom_id):
             messages.warning(request, 'An error occurred !!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
+
         form = LessonMaterialsForm()
-        return render(request, "classroom/add_lesson_materials.html", {'form': form})
+        context = {
+            'obj': obj,
+            'form': form
+        }
+        return render(request, "classroom/add_lesson_materials.html",context )
 
 @login_required
 def edit_lesson_materials(request, classroom_id,lesson_materials_id):
@@ -508,7 +518,7 @@ def delete_lesson_materials(request,classroom_id,lesson_materials_id):
     }
     if request.method == 'POST':
         del_lesson_materials.delete()
-
+        messages.success(request, 'successfully Deleted Lesson Materials')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     return render(request, 'classroom/classroom_activity.html', context)

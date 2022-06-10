@@ -78,6 +78,7 @@ def lessons(request,category_id):
         'lessons_Category':lessons_Category,
         'page_obj':page_obj,
         'lessons':lessons,
+        'query': query,
     }
     return render(request, 'videolessons/lessons.html', context)
 

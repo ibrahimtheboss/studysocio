@@ -23,7 +23,7 @@ class ComplaintTests(TestCase):
         )
         Feedback.objects.create(complaint=Complaint.objects.get(id=1), Description='ok we will', created_by=self.admin)
 
-    def test_text(self):
+    def test_complaint(self):
         complaint = Complaint.objects.get(created_by = User.objects.get(id=1))
         expected_complaint_title = complaint.title
         self.assertEquals(expected_complaint_title,' new topic')

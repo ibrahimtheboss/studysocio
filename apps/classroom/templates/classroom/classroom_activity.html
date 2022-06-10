@@ -57,29 +57,37 @@ margin: 0 auto;}
 <div class="container">
     <div class="columns">
       <div class="column is-12">
-          <span><a href="{% url 'classrooms'%}">Go back</a></span>
-          <br>
+          <span><a class="button is-info" l href="{% url 'classrooms' %}">Go back</a></span>
+          <br><br>
           {% for class in classroom_details %}
+          <div class="content is-centered" {% if class.classimage %} style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(
+         '{{class.classimage.url}}');background-size: cover;" {% endif %} >
+            <div class="container has-text-centered">
+                <div class="row ">
+	                <div class="column is-12">
+        	           <div class="content">
+<br>
+	                        <div class="content has-text-white" >
+	                            <p class="title has-text-white">{{ class.name }} </p>
+								<h3 class="subtitle is-5 has-text-white">{{ class.Description }}</h3>
+                      <h3 class="subtitle is-6 has-text-white">Created by : {{ class.created_by }}</h3>
+
+
+	                        </div>
+	                    </div>
+    	            </div>
+                </div>
+
+            </div>
+        </div>
             <br>
-          <article class="media">
-  <figure class="media-left">
-    <p class="image is-128x128">
-        {% if class.classimage %}
-      <img src="{{class.classimage.url }}">
-        {% endif %}
-    </p>
-  </figure>
-  <div class="media-content">
-    <div class="content">
-      <p>
-        <span><text class="title">{{ class.name }}</text></span>
-        <br>
-          <h3 class="subtitle is-5">{{ class.Description }}</h3>
-            <h3 class="subtitle is-7">Created by : {{ class.created_by }}</h3>
-        </p>
-    </div>
-      {% if request.user.studysocioprofile.designation == 'Teacher' %}
- <div class="level-right">
+
+          <article class="media has-text-centered">
+
+              <div class="media-content">
+
+                  {% if request.user.studysocioprofile.designation == 'Teacher' %}
+                  <div class="level-right">
 
      <a href="{% url 'add_lesson_materials' class.id %}">
          <button class="button" >+ Lesson</button></a>

@@ -33,7 +33,9 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
     <div class="columns">
       <div class="column is-12 is-offset-one">
           <h1 class="title">Your Article <sup>({{articles_list.count}})</sup></h1>
-
+<p><a href="{% url 'article_category' %}">
+               <button class="button is-info"><< Back </button></a></p>
+          <br>
 
           {% if messages %}
 <ul class="messages">

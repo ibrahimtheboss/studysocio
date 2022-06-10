@@ -13,8 +13,8 @@
     <div class="columns">
       <div class="column is-11 is-offset-one">
           <h1 class="title">Create Article</h1>
-          <p><a href="{% url 'your_articles' request.user.username %}">
-               <button class="button is-info"><< Back to Your Articles </button></a></p>
+          <p><a href="{% url 'article_category' %}">
+               <button class="button is-info"><< Back </button></a></p>
           <br>
            {% if user.studysocioprofile.avatar %}
             <figure class="image is-128x128">
@@ -66,13 +66,17 @@
               </div>
                 <br>
               <div class="form-group">
+                  <div class="column is-5">
                   <label><font class="label" > Title : </font></label>
                   {{ form.title}}
+                      </div>
               </div>
               <br>
               <div class="form-group">
+                  <div class="column is-5">
                   <label><font class="label" > Description : (small description) </font></label>
                   {{ form.description}}
+                      </div>
               </div>
               <br>
               <div class="form-group">
@@ -81,8 +85,10 @@
               </div>
               <br>
               <div class="form-group">
+                  <div class="column is-5">
                   <label><font class="label" > Image caption (title): </font></label>
                   {{ form.titleimagecaption}}
+                       </div>
               </div>
               <br>
               <div class="form-group">

@@ -13,7 +13,7 @@ from apps.topic.models import Topic
 
 @login_required
 def create_article(request):
-    if request.user.studysocioprofile.designation == "Teacher":
+    if request.user.is_authenticated:
         users = User.objects.all()
         if request.method =='POST':
             form = ArticleForm(request.POST, request.FILES)
@@ -81,6 +81,7 @@ def articles(request,category_id):
         'articles_Category':articles_Category,
         'page_obj': page_obj,
         "articles":articles,
+        'query':query,
     }
     return render(request, 'article/articles.html', context)
 @login_required
@@ -98,7 +99,7 @@ def per_article(request,category_id,article_id):
     return render(request, 'article/per_article.html', context)
 @login_required
 def your_articles(request,user_name):
-    if request.user.studysocioprofile.designation == "Teacher" and request.user.username ==user_name :
+    if request.user.is_authenticated and request.user.username ==user_name :
         articles_list = Article.objects.filter(created_by=request.user)
         context = {
             "articles_list": articles_list,
@@ -109,7 +110,7 @@ def your_articles(request,user_name):
 
 @login_required
 def delete_articles(request,article_id,user_name):
-    if request.user.studysocioprofile.designation == "Teacher" and request.user.username == user_name:
+    if request.user.is_authenticated and request.user.username == user_name:
         articles_list = Article.objects.filter(created_by=request.user)
         articles_delete = Article.objects.get(id=article_id)
         context = {
@@ -125,7 +126,7 @@ def delete_articles(request,article_id,user_name):
         return redirect('article_category')
 @login_required
 def my_per_article(request,article_id,user_name):
-    if request.user.studysocioprofile.designation == "Teacher" and request.user.username == user_name:
+    if request.user.is_authenticated and request.user.username == user_name:
         articles = Article.objects.get(id=article_id)
 
         Likes = Like.objects.filter(Article=article_id)
@@ -141,7 +142,7 @@ def my_per_article(request,article_id,user_name):
 
 @login_required
 def edit_article(request,article_id,user_name):
-    if request.user.studysocioprofile.designation == "Teacher" and request.user.username == user_name:
+    if request.user.is_authenticated and request.user.username == user_name:
         obj = Article.objects.get(id=article_id)
         if request.method == 'POST':
             form = ArticleForm(request.POST, request.FILES, instance=obj)

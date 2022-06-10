@@ -36,13 +36,13 @@ box-shadow: 0 10px 16px rgba(0, 0, 0, .13), 0 6px 6px rgba(0, 0, 0, .19);
           <h1 class="title">Article Category</h1>
 
              <div class="level-right">
-                 {% if request.user.studysocioprofile.designation == "Teacher" %}
+
            <a href="{% url 'create_article' %}">
                <button class="button">+ Create Article </button></a>
                  &nbsp;&nbsp;
                  <a href="{% url 'your_articles' request.user.username %}">
                <button class="button">Your Articles </button></a>
-                 {% endif %}
+
   </div>
 
 
