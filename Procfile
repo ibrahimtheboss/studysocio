@@ -1,0 +1,1 @@
+web gunicorn studysocio.wsgi:application --log-file -
